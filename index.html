@@ -2,464 +2,352 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Oil & Gas Career Pro Navigator | Responsive Edition</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Career Assistant - Offshore Roadmap</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        primary: {
-                            50: 'rgb(var(--color-primary-50) / <alpha-value>)',
-                            100: 'rgb(var(--color-primary-100) / <alpha-value>)',
-                            400: 'rgb(var(--color-primary-400) / <alpha-value>)',
-                            500: 'rgb(var(--color-primary-500) / <alpha-value>)',
-                            600: 'rgb(var(--color-primary-600) / <alpha-value>)',
-                        }
-                    }
-                }
-            }
-        }
-    </script>
-    
-    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
-    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
-        
         :root {
-            --color-primary-50: 240 249 255;
-            --color-primary-100: 224 242 254;
-            --color-primary-400: 56 189 248;
-            --color-primary-500: 14 165 233;
-            --color-primary-600: 2 132 199;
-            --sky-primary: #0ea5e9;
-            --amber-peak: #f59e0b;
-            --oil-slate: #0f172a;
+            --sky-primary: #2563eb;
+            --sky-primary-dark: #1e40af;
+            --sky-bg: linear-gradient(135deg, #f0f4f8 0%, #d9e2ec 100%);
         }
 
-        [data-theme="emerald"] { --color-primary-50: 236 253 245; --color-primary-100: 209 250 229; --color-primary-400: 52 211 153; --color-primary-500: 16 185 129; --color-primary-600: 5 150 105; --sky-primary: #10b981; }
-        [data-theme="violet"] { --color-primary-50: 245 243 255; --color-primary-100: 237 233 254; --color-primary-400: 167 139 250; --color-primary-500: 139 92 246; --color-primary-600: 124 58 237; --sky-primary: #8b5cf6; }
-        [data-theme="rose"] { --color-primary-50: 255 241 242; --color-primary-100: 255 228 230; --color-primary-400: 251 113 133; --color-primary-500: 244 63 94; --color-primary-600: 225 29 72; --sky-primary: #f43f5e; }
-        [data-theme="amber"] { --color-primary-50: 255 251 235; --color-primary-100: 254 243 199; --color-primary-400: 251 191 36; --color-primary-500: 245 158 11; --color-primary-600: 217 119 6; --sky-primary: #f59e0b; }
-
-        html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8fafc; color: var(--oil-slate); }
-
-        .bg-fixed-overlay { position: fixed; inset: 0; background-size: cover; background-position: center; z-index: -1; transition: background-image 1s ease; opacity: 0.6; }
-        .glass-panel { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.5); }
-
-        /* ROADMAP RESPONSIVE */
-        .roadmap-viewport { 
-            position: relative; width: 100%; height: 100%; border-radius: 24px; 
-            background: radial-gradient(circle at top right, #ffffff 0%, #f1f5f9 100%);
-            overflow-x: hidden; overflow-y: auto; 
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--sky-bg);
+            height: 100vh;
+            overflow: hidden;
         }
 
-        /* Mobile specific roadmap list */
-        .mobile-roadmap-list { display: flex; flex-direction: column; gap: 1rem; padding: 1.5rem; width: 100%; }
-
-        .node-card {
-            background: rgba(255, 255, 255, 0.95); border-radius: 20px; padding: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 2px solid transparent;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer;
-        }
-        .node-card:active { transform: scale(0.98); }
-        
-        .node-circle {
-            width: 28px; height: 28px; border-radius: 50%; color: white;
-            display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 12px;
-            border: 2px solid #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
         }
 
-        /* Dashboards / Stepper */
-        .custom-scrollbar::-webkit-scrollbar { width: 4px; height: 4px; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        .bot-bubble {
+            background: #ffffff;
+            border-bottom-left-radius: 4px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
 
-        .tab-btn { white-space: nowrap; padding: 12px 16px; font-weight: 800; font-size: 13px; color: #94a3b8; transition: 0.3s; border-bottom: 2px solid transparent; }
-        .tab-btn.active { color: var(--sky-primary); border-bottom-color: var(--sky-primary); }
+        .user-bubble {
+            background: var(--sky-primary);
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
 
-        .animate-up { animation: fadeInUp 0.5s ease-out forwards; }
-        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .suggestion-chip {
+            background: rgba(37, 99, 235, 0.1);
+            border: 1px solid rgba(37, 99, 235, 0.2);
+            color: var(--sky-primary);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: left;
+        }
 
-        /* Role Selection Dropup */
-        #dropdownMenu { max-width: 90vw; left: 50%; transform: translateX(-50%); width: 100%; }
+        .suggestion-chip:hover {
+            background: var(--sky-primary);
+            color: white;
+            transform: translateY(-1px);
+        }
 
-        @media (min-width: 1024px) {
-            .roadmap-viewport { overflow: hidden; border-radius: 40px; }
-            #dropdownMenu { max-width: 100%; left: 0; transform: none; }
-            .node-card { width: 180px; position: absolute; }
+        .loading-dots div {
+            animation: bounce 1.4s infinite ease-in-out both;
+        }
+        .loading-dots .dot1 { animation-delay: -0.32s; }
+        .loading-dots .dot2 { animation-delay: -0.16s; }
+
+        @keyframes bounce {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1.0); }
+        }
+
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+
+        .offshore-bg {
+            background-image: url('https://images.unsplash.com/photo-1517089596392-db21525844fe?q=80&w=2070&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+            filter: brightness(0.35);
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+        }
+
+        .pulse-button {
+            box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.7);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 15px rgba(37, 99, 235, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(37, 99, 235, 0); }
+        }
+
+        .animate-fade-in {
+            animation: fadeIn 0.3s ease-out forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
     </style>
 </head>
-<body class="flex flex-col">
+<body class="relative">
+    <div class="offshore-bg"></div>
 
-<div class="bg-fixed-overlay" id="bgOverlay"></div>
+    <header class="p-6 text-white flex justify-between items-center max-w-7xl mx-auto">
+        <div class="flex items-center space-x-4">
+            <div class="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center backdrop-blur-md">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-blue-400"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+            </div>
+            <div>
+                <h1 class="text-2xl font-black tracking-tighter uppercase italic">Sky<span class="text-blue-400">Career</span></h1>
+                <p class="text-[10px] opacity-70 uppercase tracking-[0.2em]">Offshore Professional Ecosystem</p>
+            </div>
+        </div>
+    </header>
 
-<div id="app" class="absolute inset-0 flex flex-col p-3 md:p-6 lg:p-8 overflow-hidden">
-    
-    <!-- TOP NAV -->
-    <div class="flex justify-between items-start z-[100] mb-2 shrink-0">
-        <div id="themeSelectorContainer">
-            <div class="relative">
-                <button onclick="toggleThemeMenu(event)" class="bg-white/80 backdrop-blur-md border border-slate-200/60 shadow-sm px-3 py-2 rounded-full text-slate-700 font-black text-[11px] uppercase tracking-wider flex items-center gap-2">
-                    <i data-lucide="palette" class="w-3.5 h-3.5 text-primary-600"></i> <span class="hidden sm:inline">Theme</span>
-                </button>
-                <div id="themeMenu" class="absolute top-full left-0 mt-2 w-40 bg-white shadow-xl rounded-2xl overflow-hidden hidden p-1">
-                    <button onclick="setTheme('default')" class="w-full flex items-center gap-2 px-3 py-2 hover:bg-slate-50 text-[12px] font-bold text-slate-600"><span class="w-3 h-3 rounded-full bg-[#0ea5e9]"></span> Blue</button>
-                    <button onclick="setTheme('emerald')" class="w-full flex items-center gap-2 px-3 py-2 hover:bg-slate-50 text-[12px] font-bold text-slate-600"><span class="w-3 h-3 rounded-full bg-[#10b981]"></span> Green</button>
-                    <button onclick="setTheme('rose')" class="w-full flex items-center gap-2 px-3 py-2 hover:bg-slate-50 text-[12px] font-bold text-slate-600"><span class="w-3 h-3 rounded-full bg-[#f43f5e]"></span> Rose</button>
+    <main class="max-w-4xl mx-auto mt-20 p-8 text-center text-white">
+        <h2 class="text-5xl font-extrabold mb-6 leading-tight">Định hình tương lai <br><span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-300">Sự nghiệp Offshore</span></h2>
+        <p class="text-lg opacity-80 mb-10 max-w-2xl mx-auto leading-relaxed">Hệ thống AI Assistant hỗ trợ định hướng dựa trên dữ liệu Roadmap thực tế.</p>
+    </main>
+
+    <button id="chat-toggle" class="fixed bottom-8 right-8 w-16 h-16 bg-blue-600 text-white rounded-full shadow-2xl flex items-center justify-center hover:bg-blue-700 transition-all z-50 pulse-button">
+        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" id="chat-icon-open"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" id="chat-icon-close" class="hidden"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+    </button>
+
+    <div id="chat-box" class="fixed bottom-28 right-8 w-[95vw] md:w-[480px] max-h-[75vh] glass-effect rounded-3xl shadow-2xl z-50 hidden flex flex-col overflow-hidden border border-white/40">
+        <div class="bg-gradient-to-r from-blue-600 to-blue-700 p-5 text-white flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-md">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 0 1 10 10c0 5.523-4.477 10-10 10S2 17.523 2 12A10 10 0 0 1 12 2z"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>
                 </div>
-            </div>
-        </div>
-        <img id="mainLogo" src="image/background/logo.png" alt="O&G Logo" class="w-24 md:w-40 object-contain opacity-90">
-    </div>
-
-    <!-- PAGE 1: SELECTION -->
-    <div id="page1" class="flex-1 flex flex-col items-center justify-center space-y-6 overflow-y-auto custom-scrollbar px-2">
-        <div class="text-center space-y-4 animate-up">
-            <div class="inline-flex items-center gap-2 bg-white/60 backdrop-blur px-4 py-1.5 rounded-full text-[11px] font-black uppercase tracking-widest border border-white shadow-sm">
-                <i data-lucide="shield-check" class="w-3 h-3 text-primary-600"></i> Professional Edition
-            </div>
-            <div class="bg-white/40 backdrop-blur-md border border-white/60 shadow-xl rounded-[2rem] p-6 md:p-10 max-w-2xl">
-                <h1 class="text-3xl md:text-6xl font-black text-slate-900 tracking-tighter leading-none mb-2">
-                    CAREER <span class="text-primary-600">PATHWAY</span>
-                </h1>
-                <p class="text-slate-600 font-medium text-sm md:text-lg">Định hướng sự nghiệp ngành Dầu khí</p>
-            </div>
-        </div>
-
-        <div class="glass-panel p-6 md:p-8 rounded-[32px] w-full max-w-md space-y-6 shadow-xl">
-            <div class="space-y-4">
                 <div>
-                    <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest block mb-2">Dữ liệu nguồn (.xlsx)</label>
-                    <input type="file" id="excelInput" accept=".xlsx, .xls" class="block w-full text-xs text-slate-500 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-slate-900 file:text-white border border-slate-100 rounded-2xl p-1.5 bg-white/50">
-                </div>
-                <div class="relative">
-                    <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest block mb-2">Chọn lộ trình</label>
-                    <button id="dropdownTrigger" class="w-full bg-white border border-slate-100 text-slate-400 rounded-2xl px-5 py-3 flex justify-between items-center font-bold text-sm shadow-sm opacity-60 cursor-not-allowed">
-                        <span id="dropdownSelectedText" class="truncate">Đang chờ dữ liệu...</span>
-                        <i data-lucide="chevron-down" class="w-4 h-4 shrink-0" id="dropdownIcon"></i>
-                    </button>
-                    <div id="dropdownMenu" class="absolute z-[200] bottom-full mb-3 bg-white/95 backdrop-blur-xl border border-slate-100 shadow-2xl rounded-2xl overflow-hidden hidden flex flex-col">
-                        <div class="p-2 border-b border-slate-100">
-                            <input type="text" id="roleSearchInput" placeholder="Tìm kiếm..." class="w-full bg-slate-50 border border-slate-200 text-sm font-bold rounded-xl px-3 py-2 outline-none">
-                        </div>
-                        <ul id="customRoleList" class="max-h-[200px] overflow-y-auto custom-scrollbar p-1"></ul>
-                    </div>
+                    <h3 class="font-bold text-sm">AI Career Counselor</h3>
+                    <p class="text-[10px] opacity-80">Dữ liệu Roadmap Dầu khí</p>
                 </div>
             </div>
-            <button id="btnStart" class="w-full bg-primary-600 text-white font-black py-4 rounded-2xl shadow-lg shadow-primary-600/20 flex items-center justify-center gap-2 uppercase tracking-widest text-xs opacity-60 cursor-not-allowed">
-                Khám phá ngay <i data-lucide="arrow-right" class="w-4 h-4"></i>
-            </button>
-        </div>
-    </div>
-
-    <!-- PAGE 1.5: OVERVIEW -->
-    <div id="pageOverview" class="hidden h-full flex flex-col gap-4 animate-up overflow-hidden">
-        <div class="flex items-center justify-between shrink-0 px-1">
-            <button onclick="showPage(1)" class="p-2.5 rounded-full bg-white/80 border border-slate-200 text-slate-700 shadow-sm"><i data-lucide="chevron-left" class="w-5 h-5"></i></button>
-            <div class="text-center">
-                <div class="text-[10px] font-black text-primary-600 uppercase tracking-widest mb-0.5">Career Strategy</div>
-                <h2 class="text-lg md:text-2xl font-black text-slate-900 uppercase">ROADMAP</h2>
-            </div>
-            <button id="btnGoToDetail" class="bg-primary-600 text-white px-4 py-2 rounded-xl font-bold text-xs uppercase tracking-tighter">Chi tiết</button>
         </div>
 
-        <div class="flex-1 flex flex-col lg:flex-row gap-4 min-h-0 overflow-hidden">
-            <div class="flex-1 roadmap-viewport" id="roadmapViewport">
-                <div id="roadmapContent" class="h-full">
-                    <!-- Sẽ Render List trên mobile, SVG trên Desktop -->
+        <div id="chat-messages" class="flex-1 overflow-y-auto p-5 space-y-4 bg-gray-50/30">
+            <div class="flex items-start">
+                <div class="bot-bubble p-4 rounded-2xl max-w-[90%] text-sm text-gray-800 border border-gray-100 shadow-sm">
+                    <p class="font-semibold mb-2 text-blue-600">Xin chào! 👋</p>
+                    Tôi đã sẵn sàng hỗ trợ bạn định hướng nghề nghiệp. Bạn có thể đặt câu hỏi tự do hoặc chọn các gợi ý bên dưới:
                 </div>
             </div>
             
-            <!-- Sidebar summary - Hidden on mobile, shown in modal or below if needed -->
-            <div id="overviewSidebar" class="hidden lg:flex flex-col gap-3 w-72 shrink-0 overflow-y-auto custom-scrollbar">
-                <div class="bg-primary-600 p-5 rounded-2xl text-white shadow-lg">
-                    <span class="text-[10px] font-black uppercase opacity-70 block mb-1">Nhóm ngành</span>
-                    <h3 id="ovJobFamily" class="text-sm font-bold">---</h3>
-                </div>
-                <div class="bg-white/80 p-5 rounded-2xl border border-slate-100">
-                    <h4 class="text-[10px] font-black uppercase text-slate-400 mb-3">Hướng phát triển</h4>
-                    <div id="ovDevOpp" class="text-xs font-semibold text-slate-600 space-y-2">---</div>
-                </div>
+            <div id="quick-suggestions" class="flex flex-col gap-2 pt-2">
+                <button onclick="handleSuggestion('Tôi học ngành Cơ khí, tôi phù hợp với ngành nào?')" class="suggestion-chip px-3 py-2 rounded-xl text-xs font-medium">Tôi học ngành Cơ khí, tôi phù hợp với ngành nào?</button>
+                <button onclick="handleSuggestion('Tôi thích phân tích số liệu và làm việc văn phòng thì hợp ngành nào?')" class="suggestion-chip px-3 py-2 rounded-xl text-xs font-medium">Tôi thích phân tích số liệu & làm văn phòng...</button>
+                <button onclick="handleSuggestion('Planning Engineer cần kỹ năng gì?')" class="suggestion-chip px-3 py-2 rounded-xl text-xs font-medium">Planning Engineer cần kỹ năng gì?</button>
+                <button onclick="handleSuggestion('Tôi chưa biết mình thích ngành gì, hãy hỏi tôi vài câu để định hướng.')" class="suggestion-chip px-3 py-2 rounded-xl text-xs font-medium">Chưa biết thích gì, hãy đặt câu hỏi cho tôi</button>
+            </div>
+        </div>
+
+        <div class="p-5 bg-white border-t border-gray-100">
+            <form id="chat-form" class="flex items-center space-x-3">
+                <input type="text" id="user-input" placeholder="Nhập câu hỏi của bạn..." class="w-full p-3 bg-gray-100 border-none rounded-2xl text-sm focus:ring-2 focus:ring-blue-500 outline-none transition-all">
+                <button type="submit" class="w-12 h-12 flex items-center justify-center bg-blue-600 text-white rounded-2xl hover:bg-blue-700 disabled:opacity-50 transition-all shadow-lg shadow-blue-200" id="send-btn">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                </button>
+            </form>
+            <div id="status-indicator" class="mt-3 text-[9px] flex items-center justify-center space-x-2 text-gray-400">
+                <span id="data-status-icon" class="w-1.5 h-1.5 rounded-full bg-yellow-400"></span>
+                <span id="data-status-text">Đang tải dữ liệu...</span>
             </div>
         </div>
     </div>
 
-    <!-- PAGE 2: DASHBOARD -->
-    <div id="page2" class="hidden h-full flex flex-col gap-3 animate-up overflow-hidden">
-        <!-- Header -->
-        <div class="flex items-center justify-between shrink-0">
-            <button onclick="showPage(1.5)" class="p-2 bg-white/80 border border-slate-100 rounded-full shadow-sm"><i data-lucide="arrow-left" class="w-5 h-5 text-slate-600"></i></button>
-            <div class="text-right">
-                <h2 id="detailFuncTitle" class="text-sm font-black text-slate-900 uppercase leading-none">---</h2>
-                <span id="detailJobFamily" class="inline-block mt-1 bg-primary-100 text-primary-600 text-[9px] font-black px-2 py-0.5 rounded-full uppercase">---</span>
-            </div>
-        </div>
+    <script>
+        // --- CONFIG ---
+        const GEMINI_API_KEY = ""; // Sẽ được môi trường cung cấp
+        const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/1aWQVU9ROmEere2vvPSF5WZNdqjVRFrjMtTHEwPTBX6M/export?format=csv&gid=0";
+        let masterData = [];
+        let isDataLoaded = false;
 
-        <!-- Content -->
-        <div class="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-3 overflow-hidden">
-            <!-- Mobile Stepper (Horizontal) -->
-            <div class="col-span-1 lg:col-span-3 lg:h-full flex lg:flex-col gap-2 overflow-x-auto lg:overflow-y-auto no-scrollbar py-1 lg:py-4 px-1 bg-white/30 rounded-2xl border border-white/50 lg:hidden">
-                <div id="mobileStepper" class="flex gap-2 w-full"></div>
-            </div>
+        // --- DOM ELEMENTS ---
+        const chatToggle = document.getElementById('chat-toggle');
+        const chatBox = document.getElementById('chat-box');
+        const chatMessages = document.getElementById('chat-messages');
+        const chatForm = document.getElementById('chat-form');
+        const userInput = document.getElementById('user-input');
+        const sendBtn = document.getElementById('send-btn');
+        const statusText = document.getElementById('data-status-text');
+        const statusIcon = document.getElementById('data-status-icon');
 
-            <!-- Main Info -->
-            <div class="col-span-1 lg:col-span-9 flex flex-col glass-panel rounded-3xl overflow-hidden shadow-inner">
-                <!-- Role Card -->
-                <div class="p-4 md:p-6 border-b border-slate-100 bg-white/50 flex gap-4 items-center">
-                    <div class="w-16 h-16 md:w-20 md:h-20 bg-white rounded-2xl shadow-sm border border-slate-50 flex-shrink-0 p-2 overflow-hidden">
-                        <img id="msIcon" src="" class="w-full h-full object-contain">
-                    </div>
-                    <div class="min-w-0">
-                        <span id="msLevelLabel" class="text-[9px] font-black text-primary-600 uppercase bg-primary-50 px-2 py-0.5 rounded-md">---</span>
-                        <h1 id="roleTitleLabel" class="text-lg font-black text-slate-900 truncate">---</h1>
-                        <p id="rolePurposeLabel" class="text-xs text-slate-500 italic truncate">---</p>
-                    </div>
-                </div>
+        // --- DATA LOAD ---
+        async function fetchMasterData() {
+            try {
+                // Giải pháp CORS: Thử fetch trực tiếp, nếu lỗi thì dùng proxy trung gian
+                let response;
+                try {
+                    response = await fetch(SHEET_CSV_URL);
+                    if (!response.ok) throw new Error();
+                } catch (e) {
+                    console.log("CORS detected, trying proxy...");
+                    // Dùng allorigins proxy để lách CORS khi chạy local file
+                    const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(SHEET_CSV_URL)}`;
+                    response = await fetch(proxyUrl);
+                }
 
-                <!-- Tabs Navigation -->
-                <div class="flex overflow-x-auto custom-scrollbar border-b border-slate-100 bg-white/20 shrink-0">
-                    <button class="tab-btn active" onclick="switchTab('tab-works')">CÔNG VIỆC</button>
-                    <button class="tab-btn" onclick="switchTab('tab-skills')">NĂNG LỰC</button>
-                    <button class="tab-btn" onclick="switchTab('tab-learning')">ĐÀO TẠO</button>
-                    <button class="tab-btn" onclick="switchTab('tab-next')">THĂNG TIẾN</button>
-                </div>
+                if (!response.ok) throw new Error('Không thể tải dữ liệu từ Google Sheets.');
 
-                <!-- Tab Views -->
-                <div id="detailView" class="flex-1 overflow-y-auto p-4 md:p-6 custom-scrollbar text-sm">
-                    <div id="tab-works" class="tab-content animate-up space-y-6">
-                        <div>
-                            <h4 class="font-black text-slate-400 uppercase text-[10px] mb-3 flex items-center gap-2"><i data-lucide="list" class="w-3.5 h-3.5"></i> Trách nhiệm chính</h4>
-                            <div id="responsibilitiesList" class="space-y-2"></div>
-                        </div>
-                    </div>
-                    <div id="tab-skills" class="tab-content hidden animate-up space-y-6">
-                        <div id="competenciesContainer" class="space-y-4"></div>
-                    </div>
-                    <div id="tab-learning" class="tab-content hidden animate-up space-y-4">
-                        <div id="trainingList" class="grid grid-cols-1 gap-3"></div>
-                    </div>
-                    <div id="tab-next" class="tab-content hidden animate-up space-y-4">
-                        <div id="promotionList" class="space-y-2"></div>
-                        <div class="p-4 bg-primary-50 rounded-2xl">
-                            <span class="text-[9px] font-black text-primary-600 uppercase">Mục tiêu tiếp theo</span>
-                            <p id="nextTargetRole" class="font-bold text-slate-800">---</p>
-                        </div>
-                    </div>
-                </div>
+                const csvText = await response.text();
+                masterData = parseCSV(csvText);
+                isDataLoaded = true;
+                
+                statusText.innerText = "Dữ liệu Roadmap Sẵn sàng";
+                statusIcon.classList.replace('bg-yellow-400', 'bg-green-500');
+            } catch (error) {
+                console.error("Fetch Error:", error);
+                statusText.innerText = "Lỗi CORS/Mạng. Hãy mở bằng Live Server!";
+                statusIcon.classList.replace('bg-yellow-400', 'bg-red-500');
+                addMessage("⚠️ **Lưu ý**: Tôi không thể tự động tải dữ liệu Roadmap do chặn bảo mật (CORS). Hãy đảm bảo bạn đang chạy file này qua một Web Server (như Live Server trong VS Code) hoặc kiểm tra kết nối internet.", "bot");
+            }
+        }
 
-                <!-- Footer Nav -->
-                <div class="p-3 border-t border-slate-100 bg-white/50 flex items-center justify-between shrink-0">
-                    <button id="prevBtn" class="text-xs font-black text-slate-400 p-2"><i data-lucide="chevron-left" class="w-5 h-5"></i></button>
-                    <div id="pageCounter" class="text-[10px] font-black text-slate-400">01 / 05</div>
-                    <button id="nextBtn" class="bg-slate-900 text-white px-4 py-2 rounded-xl text-[10px] font-black uppercase">Tiếp</button>
-                </div>
-            </div>
-        </div>
-    </div>
+        function parseCSV(csvText) {
+            const lines = csvText.split(/\r?\n/);
+            if (lines.length < 2) return [];
+            const headers = lines[0].split(',').map(h => h.trim().replace(/^"|"$/g, ''));
+            const data = [];
+            for (let i = 1; i < lines.length; i++) {
+                if (!lines[i].trim()) continue;
+                const values = [];
+                let current = '', inQuotes = false;
+                for (let char of lines[i]) {
+                    if (char === '"') inQuotes = !inQuotes;
+                    else if (char === ',' && !inQuotes) { values.push(current.trim()); current = ''; }
+                    else { current += char; }
+                }
+                values.push(current.trim());
+                const row = {};
+                headers.forEach((h, idx) => row[h] = values[idx] || "");
+                data.push(row);
+            }
+            return data;
+        }
 
-</div>
-
-<script>
-    let masterData = [];
-    let currentRoleMilestones = [];
-    let currentIdx = 0;
-    let selectedRoleValue = "";
-    
-    lucide.createIcons();
-
-    // -- LOGIC EXCEL --
-    const excelInput = document.getElementById('excelInput');
-    excelInput.addEventListener('change', function(e) {
-        const file = e.target.files[0];
-        if (!file) return;
-        const reader = new FileReader();
-        reader.onload = function(event) {
-            const data = new Uint8Array(event.target.result);
-            const workbook = XLSX.read(data, { type: 'array' });
-            const sheet = workbook.Sheets[workbook.SheetNames[0]];
-            const json = XLSX.utils.sheet_to_json(sheet);
-            masterData = json;
-            
-            const roles = [...new Set(json.map(d => d.function_title))].filter(Boolean);
-            renderRoleDropdown(roles);
-            
-            document.getElementById('dropdownTrigger').classList.remove('opacity-60', 'cursor-not-allowed');
-            document.getElementById('dropdownSelectedText').innerText = "Chọn lộ trình phát triển...";
+        // --- UI ACTIONS ---
+        chatToggle.onclick = () => {
+            chatBox.classList.toggle('hidden');
+            document.getElementById('chat-icon-open').classList.toggle('hidden');
+            document.getElementById('chat-icon-close').classList.toggle('hidden');
+            if (!chatBox.classList.contains('hidden')) userInput.focus();
         };
-        reader.readAsArrayBuffer(file);
-    });
 
-    function renderRoleDropdown(roles) {
-        const list = document.getElementById('customRoleList');
-        list.innerHTML = '';
-        roles.sort().forEach(r => {
-            const li = document.createElement('li');
-            li.className = 'px-4 py-2 text-sm font-bold text-slate-600 hover:bg-primary-50 cursor-pointer rounded-lg mb-1';
-            li.innerText = r;
-            li.onclick = () => {
-                selectedRoleValue = r;
-                document.getElementById('dropdownSelectedText').innerText = r;
-                document.getElementById('dropdownSelectedText').classList.add('text-slate-900');
-                document.getElementById('dropdownMenu').classList.add('hidden');
-                document.getElementById('btnStart').classList.remove('opacity-60', 'cursor-not-allowed');
-                document.getElementById('btnStart').classList.add('bg-slate-900');
-            };
-            list.appendChild(li);
-        });
-    }
-
-    document.getElementById('dropdownTrigger').onclick = () => document.getElementById('dropdownMenu').classList.toggle('hidden');
-
-    document.getElementById('btnStart').onclick = () => {
-        if (!selectedRoleValue) return;
-        currentRoleMilestones = masterData.filter(d => d.function_title === selectedRoleValue)
-            .sort((a,b) => (a.milestone_order || 0) - (b.milestone_order || 0));
-        showPage(1.5);
-    };
-
-    function showPage(n) {
-        document.querySelectorAll('#app > div').forEach(d => d.classList.add('hidden'));
-        const bg = document.getElementById('bgOverlay');
-        
-        if (n === 1) {
-            document.getElementById('page1').classList.remove('hidden');
-            bg.style.backgroundImage = "url('https://images.unsplash.com/photo-1516110833967-0b5716ca1387?auto=format&fit=crop&q=80')";
-        } else if (n === 1.5) {
-            document.getElementById('pageOverview').classList.remove('hidden');
-            renderAdaptiveRoadmap();
-        } else {
-            document.getElementById('page2').classList.remove('hidden');
-            renderDashboard();
-        }
-        lucide.createIcons();
-    }
-
-    // Tự động thay đổi cách hiển thị Roadmap dựa trên kích thước màn hình
-    function renderAdaptiveRoadmap() {
-        const content = document.getElementById('roadmapContent');
-        const isMobile = window.innerWidth < 1024;
-        content.innerHTML = '';
-
-        if (isMobile) {
-            // Render Vertical List for Mobile
-            const list = document.createElement('div');
-            list.className = 'mobile-roadmap-list animate-up';
-            currentRoleMilestones.forEach((m, i) => {
-                const card = document.createElement('div');
-                card.className = 'node-card border-l-4 flex items-center gap-4';
-                card.style.borderLeftColor = ['#0ea5e9', '#10b981', '#f59e0b', '#8b5cf6'][i % 4];
-                card.innerHTML = `
-                    <div class="node-circle shrink-0" style="background: #0f172a">${i+1}</div>
-                    <div class="min-w-0">
-                        <div class="text-[9px] font-black uppercase text-slate-400">${m.milestone_level}</div>
-                        <div class="text-sm font-bold text-slate-900 truncate">${m.role_title}</div>
-                    </div>
-                    <i data-lucide="chevron-right" class="w-4 h-4 ml-auto text-slate-300"></i>
-                `;
-                card.onclick = () => { currentIdx = i; showPage(2); };
-                list.appendChild(card);
-            });
-            content.appendChild(list);
-        } else {
-            // Render Original Staircase for Desktop (simplified logic for stability)
-            const wrapper = document.createElement('div');
-            wrapper.className = 'relative w-full h-full p-10';
-            currentRoleMilestones.forEach((m, i) => {
-                const node = document.createElement('div');
-                node.className = 'node-card absolute';
-                node.style.left = `${10 + i * 15}%`;
-                node.style.bottom = `${10 + i * 15}%`;
-                node.innerHTML = `
-                    <div class="node-circle mb-2" style="background: #0ea5e9">${i+1}</div>
-                    <div class="text-[10px] font-black uppercase text-slate-400">${m.milestone_level}</div>
-                    <div class="text-sm font-bold text-slate-800">${m.role_title}</div>
-                `;
-                node.onclick = () => { currentIdx = i; showPage(2); };
-                wrapper.appendChild(node);
-            });
-            content.appendChild(wrapper);
-        }
-        lucide.createIcons();
-    }
-
-    function renderDashboard() {
-        const data = currentRoleMilestones[currentIdx];
-        if(!data) return;
-
-        document.getElementById('detailFuncTitle').innerText = data.function_title;
-        document.getElementById('detailJobFamily').innerText = data.job_family || '---';
-        document.getElementById('msLevelLabel').innerText = data.milestone_level;
-        document.getElementById('roleTitleLabel').innerText = data.role_title;
-        document.getElementById('rolePurposeLabel').innerText = data.role_purpose || '';
-        document.getElementById('msIcon').src = data.icon_image_path || 'https://cdn-icons-png.flaticon.com/512/1063/1063376.png';
-        document.getElementById('nextTargetRole').innerText = data.next_target_role || '---';
-
-        renderList('responsibilitiesList', data.key_responsibilities, 'check');
-        renderList('promotionList', data.promotion_criteria, 'trending-up');
-        
-        // Competencies
-        const comp = document.getElementById('competenciesContainer');
-        comp.innerHTML = '';
-        if(data.competencies_to_develop) {
-            data.competencies_to_develop.split('\n').filter(s=>s.trim()).forEach(s => {
-                const d = document.createElement('div');
-                d.innerHTML = `<div class="flex justify-between text-[10px] font-bold mb-1"><span>${s}</span><span>80%</span></div>
-                               <div class="h-1.5 bg-slate-100 rounded-full overflow-hidden"><div class="h-full bg-primary-500 w-[80%]"></div></div>`;
-                comp.appendChild(d);
-            });
+        function addMessage(text, role) {
+            const div = document.createElement('div');
+            div.className = `flex items-start ${role === 'user' ? 'justify-end' : ''} animate-fade-in`;
+            const bubbleClass = role === 'user' ? 'user-bubble' : 'bot-bubble border border-gray-100';
+            
+            // Xử lý xuống dòng và đậm
+            const formatted = text
+                .replace(/\*\*(.*?)\*\*/g, '<strong class="text-blue-700">$1</strong>')
+                .replace(/\n/g, '<br>');
+            
+            div.innerHTML = `<div class="${bubbleClass} p-4 rounded-2xl max-w-[85%] text-sm leading-relaxed shadow-sm">${formatted}</div>`;
+            chatMessages.appendChild(div);
+            chatMessages.scrollTo({ top: chatMessages.scrollHeight, behavior: 'smooth' });
         }
 
-        document.getElementById('pageCounter').innerText = `${currentIdx + 1} / ${currentRoleMilestones.length}`;
-        document.getElementById('prevBtn').onclick = () => { if(currentIdx > 0) { currentIdx--; renderDashboard(); } };
-        document.getElementById('nextBtn').onclick = () => { 
-            if(currentIdx < currentRoleMilestones.length - 1) { currentIdx++; renderDashboard(); }
-            else { showPage(1); }
+        function handleSuggestion(text) {
+            userInput.value = text;
+            chatForm.dispatchEvent(new Event('submit'));
+            const suggestDiv = document.getElementById('quick-suggestions');
+            if(suggestDiv) suggestDiv.style.display = 'none';
+        }
+
+        // --- AI LOGIC ---
+        async function callGemini(query, retries = 5, delay = 1000) {
+            if (!isDataLoaded) return "Dữ liệu hiện tại chưa được tải xong. Vui lòng đợi trong giây lát hoặc kiểm tra lỗi CORS.";
+
+            const systemPrompt = `
+            Bạn là Career AI Assistant chuyên sâu cho ngành Dầu khí/Offshore.
+            DỮ LIỆU ROADMAP (JSON): ${JSON.stringify(masterData.slice(0, 100))} (Đây là mẫu dữ liệu từ Google Sheets).
+
+            QUY TẮC PHẢN HỒI:
+            1. Dựa hoàn toàn trên dữ liệu Roadmap. KHÔNG bịa đặt chức danh hoặc thông tin nếu dữ liệu không có.
+            2. Nếu thiếu thông tin để tư vấn, hãy hỏi lại 2-4 câu ngắn để làm rõ (ngành học, sở thích làm văn phòng hay công trường, v.v.).
+            3. Gợi ý tối đa 3 lộ trình (role_title) phù hợp nhất.
+            4. Mỗi gợi ý bao gồm:
+               - **Tên lộ trình/Chức năng**.
+               - **Lý do phù hợp**.
+               - **Vai trò khởi đầu** (Milestone thấp nhất).
+               - **Kỹ năng nên chuẩn bị** (Technical & Behavioral).
+               - **Chứng chỉ/Đào tạo** (Nếu có).
+               - **Định hướng phát triển dài hạn**.
+            5. Nếu thông tin không có trong dữ liệu, hãy nói: "Dữ liệu hiện tại chưa có đủ thông tin về nội dung này."
+            6. Giọng văn: Thân thiện, ngắn gọn, phù hợp sinh viên. KHÔNG cam kết tuyển dụng.
+            `;
+
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${GEMINI_API_KEY}`;
+
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{ parts: [{ text: query }] }],
+                        systemInstruction: { parts: [{ text: systemPrompt }] }
+                    })
+                });
+
+                if (!response.ok) {
+                    if (response.status === 429 && retries > 0) {
+                        await new Promise(r => setTimeout(r, delay));
+                        return callGemini(query, retries - 1, delay * 2);
+                    }
+                    throw new Error('API Error');
+                }
+
+                const result = await response.json();
+                return result.candidates?.[0]?.content?.parts?.[0]?.text || "Xin lỗi, tôi gặp chút trục trặc khi suy nghĩ. Hãy thử lại nhé.";
+            } catch (err) {
+                if (retries > 0) {
+                    await new Promise(r => setTimeout(r, delay));
+                    return callGemini(query, retries - 1, delay * 2);
+                }
+                return "Kết nối với AI thất bại. Hãy kiểm tra kết nối mạng hoặc API Key của bạn.";
+            }
+        }
+
+        chatForm.onsubmit = async (e) => {
+            e.preventDefault();
+            const text = userInput.value.trim();
+            if (!text || sendBtn.disabled) return;
+
+            addMessage(text, 'user');
+            userInput.value = '';
+            sendBtn.disabled = true;
+
+            const loadingId = "loading-" + Date.now();
+            const loadingDiv = document.createElement('div');
+            loadingDiv.id = loadingId;
+            loadingDiv.className = 'flex items-start';
+            loadingDiv.innerHTML = `<div class="bot-bubble p-4 rounded-2xl text-xs text-gray-400 italic">AI đang phân tích dữ liệu...</div>`;
+            chatMessages.appendChild(loadingDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+
+            const response = await callGemini(text);
+            
+            document.getElementById(loadingId).remove();
+            addMessage(response, 'bot');
+            sendBtn.disabled = false;
         };
-        
-        lucide.createIcons();
-    }
 
-    function renderList(id, text, icon) {
-        const el = document.getElementById(id);
-        el.innerHTML = '';
-        if(!text) return;
-        text.split('\n').filter(s => s.trim()).forEach(s => {
-            const d = document.createElement('div');
-            d.className = 'flex gap-2 items-start mb-2';
-            d.innerHTML = `<i data-lucide="${icon}" class="w-3.5 h-3.5 mt-0.5 text-primary-500 shrink-0"></i> <span class="text-xs font-medium text-slate-600">${s}</span>`;
-            el.appendChild(d);
-        });
-    }
-
-    function switchTab(id) {
-        document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
-        document.getElementById(id).classList.remove('hidden');
-        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-        event.target.classList.add('active');
-        lucide.createIcons();
-    }
-
-    function toggleThemeMenu(e) {
-        e.stopPropagation();
-        document.getElementById('themeMenu').classList.toggle('hidden');
-    }
-
-    function setTheme(t) {
-        if(t === 'default') document.documentElement.removeAttribute('data-theme');
-        else document.documentElement.setAttribute('data-theme', t);
-        document.getElementById('themeMenu').classList.add('hidden');
-    }
-
-    window.onresize = () => {
-        if(!document.getElementById('pageOverview').classList.contains('hidden')) renderAdaptiveRoadmap();
-    };
-
-    showPage(1);
-</script>
+        // Khởi tạo
+        window.onload = fetchMasterData;
+    </script>
 </body>
 </html>
