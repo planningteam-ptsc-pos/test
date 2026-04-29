@@ -3,29 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gemini Flash Lite Chatbot</title>
+    <title>Gemini Career Assistant</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-        
         body { font-family: 'Inter', sans-serif; }
-        
         .markdown-content p { margin-bottom: 0.75rem; }
-        .markdown-content pre { 
-            background: #1e293b; color: #f8fafc; padding: 1rem; border-radius: 0.75rem; 
-            overflow-x: auto; margin: 0.75rem 0; font-size: 0.875rem;
-        }
-        .markdown-content code:not(pre code) {
-            background: #f1f5f9; color: #be185d; padding: 0.2rem 0.4rem; border-radius: 0.25rem;
-        }
-
+        .markdown-content pre { background: #1e293b; color: #f8fafc; padding: 1rem; border-radius: 0.75rem; overflow-x: auto; margin: 0.75rem 0; font-size: 0.875rem; }
+        .markdown-content code:not(pre code) { background: #f1f5f9; color: #be185d; padding: 0.2rem 0.4rem; border-radius: 0.25rem; }
         .chat-container { height: calc(100vh - 180px); }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .animate-msg { animation: fadeIn 0.3s ease-out forwards; }
     </style>
 </head>
@@ -34,26 +22,25 @@
     <!-- Header -->
     <header class="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between shadow-sm">
         <div class="flex items-center gap-3">
-            <div class="w-10 h-10 bg-violet-600 rounded-xl flex items-center justify-center text-white shadow-lg">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8z"/><path d="M12 7v5l3 3"/></svg>
+            <div class="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center text-white shadow-lg">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
             </div>
             <div>
-                <h1 class="text-lg font-bold text-gray-800 leading-none">Gemini Lite AI</h1>
-                <p class="text-[10px] text-gray-400 font-bold uppercase tracking-wider mt-1">Model: gemini-2.5-flash-lite</p>
+                <h1 class="text-lg font-bold text-gray-800 leading-none">Career Path Assistant</h1>
+                <p id="data-status" class="text-[10px] text-orange-500 font-bold uppercase tracking-wider mt-1">Đang tải dữ liệu Sheet...</p>
             </div>
         </div>
         <div class="flex items-center gap-2">
-            <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
-            <span class="text-xs text-gray-500 font-medium">Đang trực tuyến</span>
+            <span id="status-dot" class="w-2 h-2 bg-gray-400 rounded-full"></span>
+            <span id="status-text" class="text-xs text-gray-500 font-medium">Chờ dữ liệu</span>
         </div>
     </header>
 
     <!-- Chat Messages -->
     <main id="chat-history" class="chat-container flex-1 overflow-y-auto p-4 md:p-6 space-y-6">
-        <!-- Tin nhắn chào mừng -->
         <div class="flex justify-start animate-msg">
             <div class="max-w-[85%] md:max-w-[70%] bg-white border border-gray-200 p-4 rounded-2xl rounded-tl-none shadow-sm text-gray-700 text-sm">
-                Chào bạn! Tôi là trợ lý AI sử dụng mô hình Gemini 2.5 Flash Lite. Tôi đã sẵn sàng hỗ trợ bạn.
+                Xin chào! Tôi đang chuẩn bị dữ liệu từ danh sách Job Family và Career Path. Khi thông báo "Sẵn sàng" hiện lên, bạn có thể hỏi tôi về bất kỳ vị trí, kỹ năng hay lộ trình thăng tiến nào trong tài liệu.
             </div>
         </div>
     </main>
@@ -62,25 +49,27 @@
     <div id="typing" class="hidden px-6 py-2">
         <div class="flex items-center gap-2 text-gray-400 text-xs italic">
             <svg class="animate-spin h-3 w-3 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-            <span>Gemini đang suy nghĩ...</span>
+            <span>Gemini đang phân tích dữ liệu...</span>
         </div>
     </div>
 
     <!-- Input Area -->
     <footer class="bg-white border-t border-gray-200 p-4 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
         <div class="max-w-4xl mx-auto flex gap-3 items-end">
-            <div class="flex-1 bg-gray-100 rounded-2xl px-4 py-3 border border-transparent focus-within:border-violet-500 focus-within:bg-white transition-all shadow-inner">
+            <div class="flex-1 bg-gray-100 rounded-2xl px-4 py-3 border border-transparent focus-within:border-indigo-500 focus-within:bg-white transition-all shadow-inner">
                 <textarea 
                     id="user-input" 
                     rows="1" 
-                    placeholder="Nhập nội dung tin nhắn..." 
-                    class="w-full bg-transparent border-none outline-none resize-none text-gray-700 text-sm"
+                    placeholder="Đang tải dữ liệu, vui lòng đợi..." 
+                    disabled
+                    class="w-full bg-transparent border-none outline-none resize-none text-gray-700 text-sm disabled:cursor-not-allowed"
                 ></textarea>
             </div>
             <button 
                 id="send-btn"
                 onclick="handleSend()"
-                class="bg-violet-600 hover:bg-violet-700 text-white p-3.5 rounded-2xl shadow-lg shadow-violet-100 transition-all disabled:opacity-50 flex items-center justify-center"
+                disabled
+                class="bg-indigo-600 hover:bg-indigo-700 text-white p-3.5 rounded-2xl shadow-lg shadow-indigo-100 transition-all disabled:opacity-50 flex items-center justify-center"
             >
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
             </button>
@@ -88,25 +77,51 @@
     </footer>
 
     <script>
-        // Cấu hình cứng theo yêu cầu
         const API_KEY = "AIzaSyC8vnIdz2i5YAPNq8FCLgG5ngbuxcDokXI";
         const MODEL_NAME = "gemini-2.5-flash-lite";
+        const SHEET_URL = "https://docs.google.com/spreadsheets/d/1aWQVU9ROmEere2vvPSF5WZNdqjVRFrjMtTHEwPTBX6M/export?format=csv&gid=0";
 
+        let knowledgeBase = "";
         const chatHistory = document.getElementById('chat-history');
         const userInput = document.getElementById('user-input');
         const sendBtn = document.getElementById('send-btn');
         const typingIndicator = document.getElementById('typing');
+        const dataStatus = document.getElementById('data-status');
+        const statusDot = document.getElementById('status-dot');
+        const statusText = document.getElementById('status-text');
+
+        // Hàm tải dữ liệu từ Google Sheet
+        async function fetchSheetData() {
+            try {
+                const response = await fetch(SHEET_URL);
+                if (!response.ok) throw new Error("Không thể truy cập Sheet. Hãy đảm bảo Sheet đã được chia sẻ 'Bất kỳ ai có liên kết'.");
+                const csvData = await response.text();
+                knowledgeBase = csvData;
+                
+                // Cập nhật giao diện khi sẵn sàng
+                dataStatus.textContent = "Dữ liệu: Đã sẵn sàng";
+                dataStatus.className = "text-[10px] text-green-500 font-bold uppercase tracking-wider mt-1";
+                statusDot.className = "w-2 h-2 bg-green-500 rounded-full animate-pulse";
+                statusText.textContent = "Sẵn sàng";
+                userInput.disabled = false;
+                sendBtn.disabled = false;
+                userInput.placeholder = "Hỏi về lộ trình nghề nghiệp...";
+            } catch (error) {
+                dataStatus.textContent = "Lỗi tải dữ liệu";
+                dataStatus.className = "text-[10px] text-red-500 font-bold uppercase tracking-wider mt-1";
+                statusText.textContent = "Lỗi kết nối";
+                console.error(error);
+                appendMessage('error', "Không thể tải dữ liệu từ Google Sheet. Vui lòng kiểm tra quyền chia sẻ của Sheet.");
+            }
+        }
 
         async function handleSend() {
             const message = userInput.value.trim();
             if (!message || sendBtn.disabled) return;
 
-            // Clear & Disable UI
             userInput.value = '';
             userInput.style.height = 'auto';
             setLoading(true);
-
-            // Add User message
             appendMessage('user', message);
 
             try {
@@ -119,13 +134,27 @@
             }
         }
 
-        async function callGemini(prompt, retries = 5, delay = 1000) {
+        async function callGemini(prompt, retries = 3, delay = 1000) {
             const url = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL_NAME}:generateContent?key=${API_KEY}`;
             
+            // Xây dựng System Prompt với dữ liệu từ Sheet
+            const systemPrompt = `Bạn là một chuyên gia tư vấn lộ trình nghề nghiệp (Career Path Consultant). 
+Dưới đây là dữ liệu chuyên môn từ hệ thống nhân sự (định dạng CSV) chứa các thông tin về: job_family, function_title, milestone_level, role_title, role_purpose, key_responsibilities, competencies, technical_skills, behavioral_skills, KPIs, promotion_criteria, và career direction.
+
+DỮ LIỆU NHÂN SỰ:
+${knowledgeBase}
+
+NHIỆM VỤ:
+1. Chỉ trả lời dựa trên dữ liệu được cung cấp ở trên.
+2. Nếu người dùng hỏi về một vị trí, hãy tra cứu 'role_title' hoặc 'function_title'.
+3. Nếu hỏi về thăng tiến, hãy xem 'promotion_criteria' và 'next_target_role'.
+4. Trả lời bằng Tiếng Việt, trình bày rõ ràng, sử dụng bullet points cho các danh sách kỹ năng hoặc trách nhiệm.
+5. Nếu thông tin không có trong dữ liệu, hãy trả lời là thông tin này hiện chưa có trong lộ trình tiêu chuẩn.`;
+
             const payload = {
                 contents: [{ parts: [{ text: prompt }] }],
                 systemInstruction: {
-                    parts: [{ text: "Bạn là một trợ lý AI thông minh, nhiệt tình và luôn trả lời bằng Tiếng Việt." }]
+                    parts: [{ text: systemPrompt }]
                 }
             };
 
@@ -143,7 +172,7 @@
                     }
 
                     const result = await response.json();
-                    return result.candidates?.[0]?.content?.parts?.[0]?.text || "Xin lỗi, tôi không thể trả lời câu hỏi này.";
+                    return result.candidates?.[0]?.content?.parts?.[0]?.text || "Tôi không tìm thấy thông tin phù hợp trong dữ liệu.";
                 } catch (error) {
                     if (i === retries - 1) throw error;
                     await new Promise(r => setTimeout(r, delay));
@@ -159,11 +188,11 @@
             const isAI = role === 'ai';
             const isError = role === 'error';
             
-            const bgClass = isAI ? 'bg-white border border-gray-200 text-gray-700' : isError ? 'bg-red-50 border border-red-200 text-red-600' : 'bg-violet-600 text-white shadow-md';
+            const bgClass = isAI ? 'bg-white border border-gray-200 text-gray-700' : isError ? 'bg-red-50 border border-red-200 text-red-600' : 'bg-indigo-600 text-white shadow-md';
             const roundedClass = isAI ? 'rounded-2xl rounded-tl-none' : isError ? 'rounded-xl' : 'rounded-2xl rounded-tr-none';
 
             wrapper.innerHTML = `
-                <div class="max-w-[85%] md:max-w-[75%] p-4 ${bgClass} ${roundedClass} text-sm leading-relaxed">
+                <div class="max-w-[85%] md:max-w-[75%] p-4 ${bgClass} ${roundedClass} text-sm leading-relaxed shadow-sm">
                     ${isAI ? `<div class="markdown-content">${marked.parse(text)}</div>` : `<div class="whitespace-pre-wrap">${text}</div>`}
                 </div>
             `;
@@ -179,13 +208,11 @@
             if (isLoading) chatHistory.scrollTo({ top: chatHistory.scrollHeight, behavior: 'smooth' });
         }
 
-        // Tự động điều chỉnh chiều cao textarea
         userInput.addEventListener('input', function() {
             this.style.height = 'auto';
             this.style.height = (this.scrollHeight) + 'px';
         });
 
-        // Sự kiện phím Enter
         userInput.addEventListener('keydown', (e) => {
             if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
@@ -193,8 +220,10 @@
             }
         });
 
-        // Focus khi mới load
-        window.onload = () => userInput.focus();
+        // Bắt đầu tải dữ liệu khi trang web được mở
+        window.onload = () => {
+            fetchSheetData();
+        };
     </script>
 </body>
 </html>
