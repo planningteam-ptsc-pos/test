@@ -14,7 +14,7 @@
         .markdown-content ul { list-style-type: disc; margin-left: 1.5rem; margin-bottom: 0.75rem; }
         .markdown-content pre { background: #1e293b; color: #f8fafc; padding: 1rem; border-radius: 0.75rem; overflow-x: auto; margin: 0.75rem 0; font-size: 0.875rem; }
         
-        .chat-container { height: calc(100vh - 240px); }
+        .chat-container { height: calc(100vh - 320px); }
 
         /* Hiệu ứng con trỏ nhấp nháy */
         .typing-cursor::after {
@@ -24,10 +24,7 @@
             color: #4f46e5;
         }
 
-        @keyframes blink {
-            from, to { opacity: 1; }
-            50% { opacity: 0; }
-        }
+        @keyframes blink { from, to { opacity: 1; } 50% { opacity: 0; } }
 
         /* 3 chấm nhấp nháy */
         .dot-loader { display: inline-flex; gap: 3px; }
@@ -38,47 +35,61 @@
         .dot-loader span:nth-child(2) { animation-delay: 0.2s; }
         .dot-loader span:nth-child(3) { animation-delay: 0.4s; }
 
-        @keyframes dot-pulse {
-            0%, 100% { transform: scale(1); opacity: 0.4; }
-            50% { transform: scale(1.4); opacity: 1; }
-        }
-
+        @keyframes dot-pulse { 0%, 100% { transform: scale(1); opacity: 0.4; } 50% { transform: scale(1.4); opacity: 1; } }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .animate-msg { animation: fadeIn 0.3s ease-out forwards; }
-        
-        /* Tùy chỉnh thanh cuộn ngang cho nút gợi ý */
         .suggestions-scroll::-webkit-scrollbar { height: 0; }
     </style>
 </head>
-<body class="bg-gray-50 flex flex-col h-screen overflow-hidden">
+<body class="bg-gray-100 flex flex-col h-screen overflow-hidden">
 
-    <!-- Header -->
-    <header class="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between shadow-sm z-10">
+    <!-- Config Panel (Góc trên màn hình) -->
+    <section class="bg-white border-b border-gray-200 p-4 shadow-sm z-20">
+        <div class="max-w-6xl mx-auto flex flex-col md:flex-row gap-3 items-center">
+            <div class="flex-1 w-full grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div class="flex items-center gap-2 bg-gray-50 border border-gray-200 rounded-lg px-3 py-1.5">
+                    <span class="text-[10px] font-bold text-gray-400 uppercase">Model:</span>
+                    <input type="text" id="model-input" value="gemini-3.1-flash-lite-preview" class="bg-transparent border-none outline-none text-xs text-gray-700 w-full font-mono">
+                </div>
+                <div class="flex items-center gap-2 bg-gray-50 border border-gray-200 rounded-lg px-3 py-1.5">
+                    <span class="text-[10px] font-bold text-gray-400 uppercase">Key:</span>
+                    <input type="password" id="api-key-input" value="AIzaSyDzyBdLp2CrzQnwiGin3d8a9w7IdKZpKuI" class="bg-transparent border-none outline-none text-xs text-gray-700 w-full font-mono">
+                </div>
+            </div>
+            <button onclick="checkConnection()" id="connect-btn" class="w-full md:w-auto bg-slate-800 hover:bg-black text-white px-6 py-2 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-2">
+                <span>Kiểm tra kết nối</span>
+                <div id="connect-loader" class="hidden dot-loader"><span class="bg-white"></span><span class="bg-white"></span><span class="bg-white"></span></div>
+            </button>
+        </div>
+    </section>
+
+    <!-- Main Header -->
+    <header class="bg-white px-6 py-3 flex items-center justify-between border-b border-gray-100 z-10">
         <div class="flex items-center gap-3">
             <div class="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center text-white shadow-lg">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
             </div>
             <div>
-                <h1 class="text-lg font-bold text-gray-800 leading-none">Career Path Assistant</h1>
-                <p id="data-status" class="text-[10px] text-orange-500 font-bold uppercase tracking-wider mt-1">Đang tải dữ liệu Roadmap...</p>
+                <h1 class="text-sm font-bold text-gray-800 leading-none">Career Path Assistant</h1>
+                <p id="data-status" class="text-[10px] text-orange-500 font-bold uppercase tracking-wider mt-1">Chưa kết nối AI</p>
             </div>
         </div>
         <div class="flex items-center gap-2">
-            <span id="status-dot" class="w-2 h-2 bg-gray-400 rounded-full"></span>
-            <span id="status-text" class="text-xs text-gray-500 font-medium">Chờ dữ liệu</span>
+            <span id="status-dot" class="w-2 h-2 bg-gray-300 rounded-full"></span>
+            <span id="status-text" class="text-[10px] text-gray-400 font-bold uppercase">Offline</span>
         </div>
     </header>
 
     <!-- Chat Messages -->
-    <main id="chat-history" class="chat-container flex-1 overflow-y-auto p-4 md:p-6 space-y-6 scroll-smooth">
+    <main id="chat-history" class="chat-container flex-1 overflow-y-auto p-4 md:p-6 space-y-6 scroll-smooth bg-gray-50/50">
         <div class="flex justify-start animate-msg">
             <div class="max-w-[85%] md:max-w-[75%] bg-white border border-gray-200 p-4 rounded-2xl rounded-tl-none shadow-sm text-gray-700 text-sm">
-                Xin chào! Tôi là trợ lý tư vấn lộ trình nghề nghiệp. Tôi đã sẵn sàng để giúp bạn khám phá các cơ hội phát triển dựa trên dữ liệu Roadmap của hệ thống. Bạn có thể hỏi tôi về bất kỳ vị trí nào hoặc chia sẻ về ngành học của bạn để tôi tư vấn nhé!
+                Xin chào! Vui lòng nhấn <b>"Kiểm tra kết nối"</b> ở phía trên để bắt đầu trò chuyện cùng tôi nhé.
             </div>
         </div>
     </main>
 
-    <!-- Typing Indicator (AI is thinking) -->
+    <!-- Thinking Indicator -->
     <div id="ai-thinking" class="hidden px-6 py-2">
         <div class="flex items-center gap-2 text-gray-400 text-xs italic">
             <span>Gemini đang soạn tin nhắn</span>
@@ -86,220 +97,190 @@
         </div>
     </div>
 
-    <!-- Suggestions and Input Area -->
-    <footer class="bg-white border-t border-gray-200 p-4 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] z-10">
-        <!-- Nút gợi ý -->
+    <!-- Suggestions & Footer -->
+    <footer id="chat-footer" class="bg-white border-t border-gray-200 p-4 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] z-10 opacity-50 pointer-events-none transition-opacity duration-300">
         <div class="max-w-4xl mx-auto mb-4">
             <div class="suggestions-scroll flex gap-2 overflow-x-auto whitespace-nowrap pb-1">
-                <button onclick="useSuggestion('Tôi học ngành Cơ khí, tôi phù hợp với lộ trình nào?')" class="suggestion-btn text-xs bg-indigo-50 text-indigo-600 border border-indigo-100 px-4 py-2 rounded-full hover:bg-indigo-100 transition-colors disabled:opacity-50">Ngành Cơ khí</button>
-                <button onclick="useSuggestion('Ngành Điện - Tự động hóa nên chọn vị trí nào?')" class="suggestion-btn text-xs bg-indigo-50 text-indigo-600 border border-indigo-100 px-4 py-2 rounded-full hover:bg-indigo-100 transition-colors disabled:opacity-50">Ngành Điện</button>
-                <button onclick="useSuggestion('Tôi thích phân tích số liệu và làm việc văn phòng thì hợp ngành nào?')" class="suggestion-btn text-xs bg-indigo-50 text-indigo-600 border border-indigo-100 px-4 py-2 rounded-full hover:bg-indigo-100 transition-colors disabled:opacity-50">Phân tích số liệu</button>
-                <button onclick="useSuggestion('Planning Engineer cần kỹ năng gì?')" class="suggestion-btn text-xs bg-indigo-50 text-indigo-600 border border-indigo-100 px-4 py-2 rounded-full hover:bg-indigo-100 transition-colors disabled:opacity-50">Planning Engineer</button>
-                <button onclick="useSuggestion('Muốn lên vị trí Senior thì cần chuẩn bị gì?')" class="suggestion-btn text-xs bg-indigo-50 text-indigo-600 border border-indigo-100 px-4 py-2 rounded-full hover:bg-indigo-100 transition-colors disabled:opacity-50">Lộ trình thăng tiến</button>
-                <button onclick="useSuggestion('Tôi chưa biết mình thích ngành gì, hãy định hướng cho tôi.')" class="suggestion-btn text-xs bg-indigo-50 text-indigo-600 border border-indigo-100 px-4 py-2 rounded-full hover:bg-indigo-100 transition-colors disabled:opacity-50">Định hướng sự nghiệp</button>
+                <button onclick="useSuggestion('Ngành Điện - Tự động hóa nên chọn vị trí nào?')" class="suggestion-btn text-xs bg-indigo-50 text-indigo-600 border border-indigo-100 px-4 py-2 rounded-full hover:bg-indigo-100 transition-colors">Ngành Điện</button>
+                <button onclick="useSuggestion('Planning Engineer cần kỹ năng gì?')" class="suggestion-btn text-xs bg-indigo-50 text-indigo-600 border border-indigo-100 px-4 py-2 rounded-full hover:bg-indigo-100 transition-colors">Planning Engineer</button>
+                <button onclick="useSuggestion('Muốn lên vị trí Senior thì cần chuẩn bị gì?')" class="suggestion-btn text-xs bg-indigo-50 text-indigo-600 border border-indigo-100 px-4 py-2 rounded-full hover:bg-indigo-100 transition-colors">Thăng tiến</button>
+                <button onclick="useSuggestion('Tôi chưa biết mình thích ngành gì, hãy định hướng cho tôi.')" class="suggestion-btn text-xs bg-indigo-50 text-indigo-600 border border-indigo-100 px-4 py-2 rounded-full hover:bg-indigo-100 transition-colors">Định hướng</button>
             </div>
         </div>
 
         <div class="max-w-4xl mx-auto flex gap-3 items-end">
             <div class="flex-1 bg-gray-100 rounded-2xl px-4 py-3 border border-transparent focus-within:border-indigo-500 focus-within:bg-white transition-all shadow-inner">
-                <textarea 
-                    id="user-input" 
-                    rows="1" 
-                    placeholder="Đang tải dữ liệu, vui lòng đợi..." 
-                    disabled
-                    class="w-full bg-transparent border-none outline-none resize-none text-gray-700 text-sm disabled:cursor-not-allowed"
-                ></textarea>
+                <textarea id="user-input" rows="1" placeholder="Vui lòng kết nối AI trước..." disabled class="w-full bg-transparent border-none outline-none resize-none text-gray-700 text-sm"></textarea>
             </div>
-            <button 
-                id="send-btn"
-                onclick="handleSend()"
-                disabled
-                class="bg-indigo-600 hover:bg-indigo-700 text-white p-3.5 rounded-2xl shadow-lg shadow-indigo-100 transition-all disabled:opacity-50 flex items-center justify-center"
-            >
+            <button id="send-btn" onclick="handleSend()" disabled class="bg-indigo-600 hover:bg-indigo-700 text-white p-3.5 rounded-2xl shadow-lg transition-all disabled:opacity-50">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
             </button>
         </div>
-        <p class="text-[10px] text-center text-gray-400 mt-2 italic">Lưu ý: Các phản hồi dựa trên dữ liệu Roadmap hiện có và không thay thế cho cam kết tuyển dụng chính thức.</p>
     </footer>
 
     <script>
-        const API_KEY = "AIzaSyDzyBdLp2CrzQnwiGin3d8a9w7IdKZpKuI";
-        const MODEL_NAME = "gemini-3.1-flash-lite-preview";
         const SHEET_URL = "https://docs.google.com/spreadsheets/d/1aWQVU9ROmEere2vvPSF5WZNdqjVRFrjMtTHEwPTBX6M/export?format=csv&gid=0";
-
         let knowledgeBase = "";
-        let isTyping = false; // Khóa tương tác khi đang gõ
-        
+        let isTyping = false;
+        let isConnected = false;
+
         const chatHistory = document.getElementById('chat-history');
         const userInput = document.getElementById('user-input');
         const sendBtn = document.getElementById('send-btn');
         const aiThinking = document.getElementById('ai-thinking');
-        const dataStatus = document.getElementById('data-status');
-        const statusDot = document.getElementById('status-dot');
-        const statusText = document.getElementById('status-text');
-        const suggestionBtns = document.querySelectorAll('.suggestion-btn');
+        const connectBtn = document.getElementById('connect-btn');
+        const connectLoader = document.getElementById('connect-loader');
 
-        // Tải dữ liệu từ Sheet
-        async function fetchSheetData() {
-            try {
-                const response = await fetch(SHEET_URL);
-                if (!response.ok) throw new Error("Connection failed");
-                knowledgeBase = await response.text();
-                
-                dataStatus.textContent = "Dữ liệu: Đã sẵn sàng";
-                dataStatus.className = "text-[10px] text-green-500 font-bold uppercase tracking-wider mt-1";
-                statusDot.className = "w-2 h-2 bg-green-500 rounded-full";
-                statusText.textContent = "Sẵn sàng";
-                userInput.disabled = false;
-                sendBtn.disabled = false;
-                suggestionBtns.forEach(btn => btn.disabled = false);
-                userInput.placeholder = "Ví dụ: Tôi học ngành Điện thì chọn vị trí nào?";
-            } catch (error) {
-                dataStatus.textContent = "Lỗi tải dữ liệu";
-                dataStatus.className = "text-[10px] text-red-500 font-bold uppercase tracking-wider mt-1";
-                statusText.textContent = "Lỗi kết nối";
+        // 1. Kiểm tra kết nối AI & Tải Sheet
+        async function checkConnection() {
+            const key = document.getElementById('api-key-input').value.trim();
+            const model = document.getElementById('model-input').value.trim();
+            
+            if(!key || !model) {
+                alert("Vui lòng điền đầy đủ Key và Model!");
+                return;
             }
+
+            connectBtn.disabled = true;
+            connectLoader.classList.remove('hidden');
+            connectBtn.querySelector('span').textContent = "Đang kiểm tra...";
+
+            try {
+                // Thử gọi thử nghiệm danh sách models hoặc một lệnh generate đơn giản
+                const testUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}?key=${key}`;
+                const response = await fetch(testUrl);
+                
+                if(!response.ok) {
+                    const err = await response.json();
+                    throw new Error(err.error?.message || "Kết nối thất bại");
+                }
+
+                // Nếu OK, tải dữ liệu Sheet
+                await fetchSheetData();
+                
+                // Mở khóa UI
+                isConnected = true;
+                document.getElementById('chat-footer').classList.remove('opacity-50', 'pointer-events-none');
+                userInput.disabled = false;
+                userInput.placeholder = "Nhập câu hỏi tại đây...";
+                sendBtn.disabled = false;
+                
+                document.getElementById('status-text').textContent = "Online";
+                document.getElementById('status-dot').className = "w-2 h-2 bg-green-500 rounded-full animate-pulse";
+                
+                connectBtn.classList.replace('bg-slate-800', 'bg-green-600');
+                connectBtn.querySelector('span').textContent = "Kết nối thành công";
+                appendMessage('ai', "Hệ thống đã sẵn sàng! Dữ liệu Roadmap đã được nạp. Tôi có thể giúp gì cho bạn?");
+
+            } catch (error) {
+                alert("Lỗi kết nối: " + error.message);
+                connectBtn.querySelector('span').textContent = "Thử lại";
+            } finally {
+                connectBtn.disabled = false;
+                connectLoader.classList.add('hidden');
+            }
+        }
+
+        async function fetchSheetData() {
+            const resp = await fetch(SHEET_URL);
+            knowledgeBase = await resp.text();
+            document.getElementById('data-status').textContent = "Dữ liệu: Đã sẵn sàng";
+            document.getElementById('data-status').className = "text-[10px] text-green-500 font-bold uppercase tracking-wider mt-1";
         }
 
         async function handleSend() {
-            const message = userInput.value.trim();
-            if (!message || sendBtn.disabled || isTyping) return;
+            const msg = userInput.value.trim();
+            if(!msg || isTyping || !isConnected) return;
 
             userInput.value = '';
             userInput.style.height = 'auto';
-            appendMessage('user', message);
-            
+            appendMessage('user', msg);
             setWaitingState(true);
 
             try {
-                const aiResponse = await callGemini(message);
+                const aiResp = await callGemini(msg);
                 setWaitingState(false);
-                await renderTypewriterMessage(aiResponse);
+                await renderTypewriterMessage(aiResp);
             } catch (error) {
                 setWaitingState(false);
-                appendMessage('error', `Lỗi: ${error.message}`);
+                appendMessage('error', "Lỗi: " + error.message);
             }
         }
 
-        // Hàm sử dụng gợi ý
-        function useSuggestion(text) {
-            if (isTyping || sendBtn.disabled) return;
-            userInput.value = text;
-            userInput.style.height = 'auto';
-            userInput.style.height = (userInput.scrollHeight) + 'px';
-            handleSend();
-        }
-
         async function callGemini(prompt) {
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL_NAME}:generateContent?key=${API_KEY}`;
+            const key = document.getElementById('api-key-input').value;
+            const model = document.getElementById('model-input').value;
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key}`;
             
-            const systemPrompt = `Bạn là một chuyên gia tư vấn lộ trình nghề nghiệp thân thiện cho sinh viên và ứng viên mới ra trường. 
-DỮ LIỆU ROADMAP (CSV):
-${knowledgeBase}
-
-QUY TẮC PHẢN HỒI:
-1. TRẢ LỜI DỰA TRÊN DỮ LIỆU: Chỉ sử dụng thông tin trong dữ liệu trên. Không được bịa đặt chức danh, kỹ năng hoặc lộ trình nếu không có trong Sheet.
-2. NẾU CÂU HỎI VÀNG/THIẾU THÔNG TIN: Phải hỏi lại 2-4 câu ngắn gọn để làm rõ (ngành học, sở thích, thế mạnh...).
-3. GỢI Ý LỘ TRÌNH: Nếu đủ thông tin, gợi ý tối đa 3 lộ trình phù hợp nhất.
-4. CẤU TRÚC LỘ TRÌNH:
-   - Tên lộ trình/chức năng.
-   - Lý do phù hợp.
-   - Vai trò khởi đầu (nếu có).
-   - Kỹ năng cần chuẩn bị.
-   - Chứng chỉ/Đào tạo (nếu có).
-   - Định hướng dài hạn (nếu có).
-5. PHONG CÁCH: Thân thiện, ngắn gọn, dễ hiểu cho sinh viên.
-6. HÀNH VI CẤM: Không cam kết tuyển dụng, không khẳng định mức lương (trừ khi có trong dữ liệu).
-7. NẾU KHÔNG CÓ DỮ LIỆU: Nói rõ "Dữ liệu hiện tại chưa có đủ thông tin về nội dung này."`;
-
-            const payload = {
-                contents: [{ parts: [{ text: prompt }] }],
-                systemInstruction: { parts: [{ text: systemPrompt }] }
-            };
+            const systemPrompt = `Bạn là một chuyên gia tư vấn lộ trình nghề nghiệp. 
+DỮ LIỆU ROADMAP (CSV): ${knowledgeBase}
+QUY TẮC:
+1. Chỉ dùng dữ liệu trong Sheet. Nếu không có, nói: "Dữ liệu hiện tại chưa có đủ thông tin về nội dung này."
+2. Nếu thiếu thông tin, chỉ hỏi lại 1-2 câu ngắn về "Ngành học" và "Sở thích/Mong muốn".
+3. Gợi ý tối đa 3 lộ trình (Tên, Lý do, Khởi đầu, Kỹ năng, Chứng chỉ, Định hướng dài hạn).
+4. Ngôn ngữ: Tiếng Việt thân thiện, ngắn gọn.`;
 
             const response = await fetch(url, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
+                body: JSON.stringify({
+                    contents: [{ parts: [{ text: prompt }] }],
+                    systemInstruction: { parts: [{ text: systemPrompt }] }
+                })
             });
 
-            if (!response.ok) throw new Error("API call failed");
-            const result = await response.json();
-            return result.candidates?.[0]?.content?.parts?.[0]?.text || "Dữ liệu hiện tại chưa có đủ thông tin về nội dung này.";
+            if(!response.ok) {
+                const data = await response.json();
+                throw new Error(data.error?.message || "Lỗi API");
+            }
+            const res = await response.json();
+            return res.candidates?.[0]?.content?.parts?.[0]?.text || "Không có phản hồi.";
         }
 
-        // Hiển thị tin nhắn thông thường (user/error)
         function appendMessage(role, text) {
-            const wrapper = document.createElement('div');
-            wrapper.className = `flex ${role === 'user' ? 'justify-end' : 'justify-start'} animate-msg`;
-            
-            const bgClass = role === 'user' ? 'bg-indigo-600 text-white shadow-md' : 'bg-red-50 border border-red-200 text-red-600';
-            const roundedClass = role === 'user' ? 'rounded-2xl rounded-tr-none' : 'rounded-xl';
-
-            wrapper.innerHTML = `
-                <div class="max-w-[85%] md:max-w-[75%] p-4 ${bgClass} ${roundedClass} text-sm leading-relaxed">
-                    <div class="whitespace-pre-wrap">${text}</div>
-                </div>
-            `;
-            chatHistory.appendChild(wrapper);
+            const wrap = document.createElement('div');
+            wrap.className = `flex ${role==='user'?'justify-end':'justify-start'} animate-msg`;
+            const bg = role==='user'?'bg-indigo-600 text-white shadow-md':role==='error'?'bg-red-50 border border-red-200 text-red-600':'bg-white border border-gray-200 text-gray-700 shadow-sm';
+            wrap.innerHTML = `<div class="max-w-[85%] p-4 ${bg} rounded-2xl ${role==='user'?'rounded-tr-none':'rounded-tl-none'} text-sm leading-relaxed">${text}</div>`;
+            chatHistory.appendChild(wrap);
             chatHistory.scrollTop = chatHistory.scrollHeight;
         }
 
-        // Hiệu ứng máy đánh chữ cho AI
         async function renderTypewriterMessage(text) {
             isTyping = true;
             userInput.disabled = true;
             sendBtn.disabled = true;
-            suggestionBtns.forEach(btn => btn.disabled = true);
+            const wrap = document.createElement('div');
+            wrap.className = `flex justify-start animate-msg`;
+            const div = document.createElement('div');
+            div.className = `max-w-[85%] p-4 bg-white border border-gray-200 text-gray-700 rounded-2xl rounded-tl-none shadow-sm text-sm leading-relaxed markdown-content typing-cursor`;
+            wrap.appendChild(div);
+            chatHistory.appendChild(wrap);
 
-            const wrapper = document.createElement('div');
-            wrapper.className = `flex justify-start animate-msg`;
-            
-            const messageDiv = document.createElement('div');
-            messageDiv.className = `max-w-[85%] md:max-w-[75%] p-4 bg-white border border-gray-200 text-gray-700 rounded-2xl rounded-tl-none shadow-sm text-sm leading-relaxed markdown-content typing-cursor`;
-            
-            wrapper.appendChild(messageDiv);
-            chatHistory.appendChild(wrapper);
-
-            let currentText = "";
-            const charDelay = 10;
-
+            let cur = "";
             for (let i = 0; i < text.length; i++) {
-                currentText += text[i];
-                messageDiv.innerHTML = marked.parse(currentText);
+                cur += text[i];
+                div.innerHTML = marked.parse(cur);
                 chatHistory.scrollTop = chatHistory.scrollHeight;
-                await new Promise(resolve => setTimeout(resolve, charDelay));
+                await new Promise(r => setTimeout(r, 10));
             }
-
-            messageDiv.classList.remove('typing-cursor');
+            div.classList.remove('typing-cursor');
             isTyping = false;
             userInput.disabled = false;
             sendBtn.disabled = false;
-            suggestionBtns.forEach(btn => btn.disabled = false);
             userInput.focus();
         }
 
-        function setWaitingState(isWaiting) {
-            aiThinking.classList.toggle('hidden', !isWaiting);
-            userInput.disabled = isWaiting;
-            sendBtn.disabled = isWaiting;
-            suggestionBtns.forEach(btn => btn.disabled = isWaiting);
-            if (isWaiting) chatHistory.scrollTop = chatHistory.scrollHeight;
+        function setWaitingState(wait) {
+            aiThinking.classList.toggle('hidden', !wait);
+            userInput.disabled = wait;
+            sendBtn.disabled = wait;
+            if(wait) chatHistory.scrollTop = chatHistory.scrollHeight;
         }
 
-        userInput.addEventListener('input', function() {
-            this.style.height = 'auto';
-            this.style.height = (this.scrollHeight) + 'px';
-        });
-
-        userInput.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' && !e.shiftKey && !isTyping) {
-                e.preventDefault();
-                handleSend();
-            }
-        });
-
-        window.onload = fetchSheetData;
+        function useSuggestion(t) { if(!isTyping && isConnected) { userInput.value = t; handleSend(); } }
+        userInput.addEventListener('input', function() { this.style.height='auto'; this.style.height=this.scrollHeight+'px'; });
+        userInput.addEventListener('keydown', (e) => { if(e.key==='Enter' && !e.shiftKey && !isTyping) { e.preventDefault(); handleSend(); }});
     </script>
 </body>
 </html>
