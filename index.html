@@ -3,351 +3,246 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Career Assistant - Offshore Roadmap</title>
+    <title>AI Career Assistant</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        :root {
-            --sky-primary: #2563eb;
-            --sky-primary-dark: #1e40af;
-            --sky-bg: linear-gradient(135deg, #f0f4f8 0%, #d9e2ec 100%);
-        }
-
         body {
-            font-family: 'Inter', sans-serif;
-            background: var(--sky-bg);
-            height: 100vh;
-            overflow: hidden;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #f8fafc;
+            color: #1f2937;
+            margin: 0;
+            padding: 0;
+            font-size: 16px;
         }
-
-        .glass-effect {
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-        }
-
-        .bot-bubble {
-            background: #ffffff;
-            border-bottom-left-radius: 4px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-        }
-
-        .user-bubble {
-            background: var(--sky-primary);
-            color: white;
-            border-bottom-right-radius: 4px;
-        }
-
-        .suggestion-chip {
-            background: rgba(37, 99, 235, 0.1);
-            border: 1px solid rgba(37, 99, 235, 0.2);
-            color: var(--sky-primary);
-            cursor: pointer;
-            transition: all 0.2s ease;
-            text-align: left;
-        }
-
-        .suggestion-chip:hover {
-            background: var(--sky-primary);
-            color: white;
-            transform: translateY(-1px);
-        }
-
-        .loading-dots div {
-            animation: bounce 1.4s infinite ease-in-out both;
-        }
-        .loading-dots .dot1 { animation-delay: -0.32s; }
-        .loading-dots .dot2 { animation-delay: -0.16s; }
-
-        @keyframes bounce {
-            0%, 80%, 100% { transform: scale(0); }
-            40% { transform: scale(1.0); }
-        }
-
-        ::-webkit-scrollbar { width: 5px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
-
-        .offshore-bg {
-            background-image: url('https://images.unsplash.com/photo-1517089596392-db21525844fe?q=80&w=2070&auto=format&fit=crop');
-            background-size: cover;
-            background-position: center;
-            filter: brightness(0.35);
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
+        .bg-fixed-overlay {
+            position: fixed; top: 0vh; bottom: 0vh; left: -2vw; right: -2vw;
+            background-size: cover !important;
+            background-position: center center !important;
+            background-repeat: no-repeat !important;
             z-index: -1;
         }
-
-        .pulse-button {
-            box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.7);
-            animation: pulse 2s infinite;
+        .chatbot-widget {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            background-color: #10b981;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            z-index: 1000;
         }
-
-        @keyframes pulse {
-            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.7); }
-            70% { transform: scale(1); box-shadow: 0 0 0 15px rgba(37, 99, 235, 0); }
-            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(37, 99, 235, 0); }
+        .chatbot-window {
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            width: 350px;
+            height: 400px;
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            display: none;
+            flex-direction: column;
         }
-
-        .animate-fade-in {
-            animation: fadeIn 0.3s ease-out forwards;
+        .chatbot-header {
+            background-color: #10b981;
+            color: white;
+            padding: 10px;
+            border-radius: 12px 12px 0 0;
+            font-weight: bold;
         }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+        .chatbot-body {
+            padding: 10px;
+            flex: 1;
+            overflow-y: auto;
+        }
+        .chatbot-footer {
+            padding: 10px;
+            background-color: #f1f5f9;
+            border-radius: 0 0 12px 12px;
+        }
+        .chat-message {
+            margin-bottom: 10px;
+        }
+        .user-message {
+            text-align: right;
+            font-weight: bold;
+            color: #10b981;
+        }
+        .bot-message {
+            text-align: left;
+            color: #1f2937;
+        }
+        .message-text {
+            background-color: #e2e8f0;
+            padding: 8px;
+            border-radius: 8px;
+            max-width: 70%;
+            display: inline-block;
+        }
+        #loadingSpinner {
+            display: none;
+            text-align: center;
         }
     </style>
 </head>
-<body class="relative">
-    <div class="offshore-bg"></div>
+<body>
 
-    <header class="p-6 text-white flex justify-between items-center max-w-7xl mx-auto">
-        <div class="flex items-center space-x-4">
-            <div class="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center backdrop-blur-md">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-blue-400"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
-            </div>
-            <div>
-                <h1 class="text-2xl font-black tracking-tighter uppercase italic">Sky<span class="text-blue-400">Career</span></h1>
-                <p class="text-[10px] opacity-70 uppercase tracking-[0.2em]">Offshore Professional Ecosystem</p>
-            </div>
-        </div>
-    </header>
+<!-- Chatbot Widget -->
+<div id="chatbotWidget" class="chatbot-widget">
+    <span>💬</span>
+</div>
 
-    <main class="max-w-4xl mx-auto mt-20 p-8 text-center text-white">
-        <h2 class="text-5xl font-extrabold mb-6 leading-tight">Định hình tương lai <br><span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-300">Sự nghiệp Offshore</span></h2>
-        <p class="text-lg opacity-80 mb-10 max-w-2xl mx-auto leading-relaxed">Hệ thống AI Assistant hỗ trợ định hướng dựa trên dữ liệu Roadmap thực tế.</p>
-    </main>
-
-    <button id="chat-toggle" class="fixed bottom-8 right-8 w-16 h-16 bg-blue-600 text-white rounded-full shadow-2xl flex items-center justify-center hover:bg-blue-700 transition-all z-50 pulse-button">
-        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" id="chat-icon-open"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
-        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" id="chat-icon-close" class="hidden"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-    </button>
-
-    <div id="chat-box" class="fixed bottom-28 right-8 w-[95vw] md:w-[480px] max-h-[75vh] glass-effect rounded-3xl shadow-2xl z-50 hidden flex flex-col overflow-hidden border border-white/40">
-        <div class="bg-gradient-to-r from-blue-600 to-blue-700 p-5 text-white flex justify-between items-center">
-            <div class="flex items-center space-x-3">
-                <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-md">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 0 1 10 10c0 5.523-4.477 10-10 10S2 17.523 2 12A10 10 0 0 1 12 2z"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>
-                </div>
-                <div>
-                    <h3 class="font-bold text-sm">AI Career Counselor</h3>
-                    <p class="text-[10px] opacity-80">Dữ liệu Roadmap Dầu khí</p>
-                </div>
-            </div>
-        </div>
-
-        <div id="chat-messages" class="flex-1 overflow-y-auto p-5 space-y-4 bg-gray-50/30">
-            <div class="flex items-start">
-                <div class="bot-bubble p-4 rounded-2xl max-w-[90%] text-sm text-gray-800 border border-gray-100 shadow-sm">
-                    <p class="font-semibold mb-2 text-blue-600">Xin chào! 👋</p>
-                    Tôi đã sẵn sàng hỗ trợ bạn định hướng nghề nghiệp. Bạn có thể đặt câu hỏi tự do hoặc chọn các gợi ý bên dưới:
-                </div>
-            </div>
-            
-            <div id="quick-suggestions" class="flex flex-col gap-2 pt-2">
-                <button onclick="handleSuggestion('Tôi học ngành Cơ khí, tôi phù hợp với ngành nào?')" class="suggestion-chip px-3 py-2 rounded-xl text-xs font-medium">Tôi học ngành Cơ khí, tôi phù hợp với ngành nào?</button>
-                <button onclick="handleSuggestion('Tôi thích phân tích số liệu và làm việc văn phòng thì hợp ngành nào?')" class="suggestion-chip px-3 py-2 rounded-xl text-xs font-medium">Tôi thích phân tích số liệu & làm văn phòng...</button>
-                <button onclick="handleSuggestion('Planning Engineer cần kỹ năng gì?')" class="suggestion-chip px-3 py-2 rounded-xl text-xs font-medium">Planning Engineer cần kỹ năng gì?</button>
-                <button onclick="handleSuggestion('Tôi chưa biết mình thích ngành gì, hãy hỏi tôi vài câu để định hướng.')" class="suggestion-chip px-3 py-2 rounded-xl text-xs font-medium">Chưa biết thích gì, hãy đặt câu hỏi cho tôi</button>
-            </div>
-        </div>
-
-        <div class="p-5 bg-white border-t border-gray-100">
-            <form id="chat-form" class="flex items-center space-x-3">
-                <input type="text" id="user-input" placeholder="Nhập câu hỏi của bạn..." class="w-full p-3 bg-gray-100 border-none rounded-2xl text-sm focus:ring-2 focus:ring-blue-500 outline-none transition-all">
-                <button type="submit" class="w-12 h-12 flex items-center justify-center bg-blue-600 text-white rounded-2xl hover:bg-blue-700 disabled:opacity-50 transition-all shadow-lg shadow-blue-200" id="send-btn">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
-                </button>
-            </form>
-            <div id="status-indicator" class="mt-3 text-[9px] flex items-center justify-center space-x-2 text-gray-400">
-                <span id="data-status-icon" class="w-1.5 h-1.5 rounded-full bg-yellow-400"></span>
-                <span id="data-status-text">Đang tải dữ liệu...</span>
-            </div>
-        </div>
+<!-- Chatbot Window -->
+<div id="chatbotWindow" class="chatbot-window">
+    <div class="chatbot-header">
+        AI Career Assistant
     </div>
+    <div class="chatbot-body" id="chatbotBody"></div>
+    <div class="chatbot-footer">
+        <input type="text" id="userInput" class="w-full p-2 border rounded" placeholder="Hãy hỏi tôi một câu..." />
+        <button id="sendMessageButton" class="w-full p-2 mt-2 bg-green-500 text-white rounded">Gửi</button>
+        <div id="loadingSpinner">Đang xử lý...</div>
+    </div>
+</div>
 
-    <script>
-        // --- CONFIG ---
-        const GEMINI_API_KEY = ""; // Sẽ được môi trường cung cấp
-        const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/1aWQVU9ROmEere2vvPSF5WZNdqjVRFrjMtTHEwPTBX6M/export?format=csv&gid=0";
-        let masterData = [];
-        let isDataLoaded = false;
+<script>
+// API Key Gemini (Thay thế với API key thật của bạn)
+const GEMINI_API_KEY = "PASTE_YOUR_GEMINI_API_KEY_HERE";
 
-        // --- DOM ELEMENTS ---
-        const chatToggle = document.getElementById('chat-toggle');
-        const chatBox = document.getElementById('chat-box');
-        const chatMessages = document.getElementById('chat-messages');
-        const chatForm = document.getElementById('chat-form');
-        const userInput = document.getElementById('user-input');
-        const sendBtn = document.getElementById('send-btn');
-        const statusText = document.getElementById('data-status-text');
-        const statusIcon = document.getElementById('data-status-icon');
+// Fetch dữ liệu từ Google Sheets CSV
+const sheetUrl = "https://docs.google.com/spreadsheets/d/1aWQVU9ROmEere2vvPSF5WZNdqjVRFrjMtTHEwPTBX6M/export?format=csv&gid=0";
+let roadmapData = [];
 
-        // --- DATA LOAD ---
-        async function fetchMasterData() {
-            try {
-                // Giải pháp CORS: Thử fetch trực tiếp, nếu lỗi thì dùng proxy trung gian
-                let response;
-                try {
-                    response = await fetch(SHEET_CSV_URL);
-                    if (!response.ok) throw new Error();
-                } catch (e) {
-                    console.log("CORS detected, trying proxy...");
-                    // Dùng allorigins proxy để lách CORS khi chạy local file
-                    const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(SHEET_CSV_URL)}`;
-                    response = await fetch(proxyUrl);
-                }
+// Lấy dữ liệu từ Google Sheet
+async function fetchData() {
+    const response = await fetch(sheetUrl);
+    const csvData = await response.text();
+    roadmapData = parseCSV(csvData);
+}
 
-                if (!response.ok) throw new Error('Không thể tải dữ liệu từ Google Sheets.');
+// Hàm phân tích CSV
+function parseCSV(csvText) {
+    const rows = [];
+    let current = '';
+    let row = [];
+    let inQuotes = false;
+    for (let i = 0; i < csvText.length; i++) {
+        const char = csvText[i];
+        const nextChar = csvText[i + 1];
+        if (char === '"') {
+            if (inQuotes && nextChar === '"') { current += '"'; i++; } else { inQuotes = !inQuotes; }
+        } else if (char === ',' && !inQuotes) { row.push(current.trim()); current = ''; }
+        else if ((char === '\n' || char === '\r') && !inQuotes) {
+            if (char === '\r' && nextChar === '\n') i++;
+            row.push(current.trim()); current = '';
+            rows.push(row);
+            row = [];
+        } else { current += char; }
+    }
+    if (current.length > 0 || row.length > 0) { row.push(current.trim()); rows.push(row); }
+    return rows.slice(1).map(row => ({
+        job_family: row[0],
+        function_title: row[1],
+        milestone_order: row[2],
+        milestone_level: row[3],
+        role_title: row[4],
+        role_purpose: row[5],
+        key_responsibilities: row[6],
+        competencies_to_develop: row[7],
+        technical_skills_tools: row[8],
+        behavioral_leadership_skills: row[9],
+        key_outputs_kpis: row[10],
+        typical_scope: row[11],
+        suggested_training_development: row[12],
+        recommended_certifications: row[13],
+        readiness_indicators: row[14],
+        promotion_criteria: row[15],
+        development_opportunity: row[16],
+        long_term_direction: row[17],
+        next_target_role: row[18]
+    }));
+}
 
-                const csvText = await response.text();
-                masterData = parseCSV(csvText);
-                isDataLoaded = true;
-                
-                statusText.innerText = "Dữ liệu Roadmap Sẵn sàng";
-                statusIcon.classList.replace('bg-yellow-400', 'bg-green-500');
-            } catch (error) {
-                console.error("Fetch Error:", error);
-                statusText.innerText = "Lỗi CORS/Mạng. Hãy mở bằng Live Server!";
-                statusIcon.classList.replace('bg-yellow-400', 'bg-red-500');
-                addMessage("⚠️ **Lưu ý**: Tôi không thể tự động tải dữ liệu Roadmap do chặn bảo mật (CORS). Hãy đảm bảo bạn đang chạy file này qua một Web Server (như Live Server trong VS Code) hoặc kiểm tra kết nối internet.", "bot");
-            }
-        }
+// Hiển thị câu trả lời từ bot
+function displayMessage(message, isUser = false) {
+    const messageElement = document.createElement("div");
+    messageElement.classList.add("chat-message");
+    messageElement.classList.add(isUser ? "user-message" : "bot-message");
+    messageElement.innerHTML = `<span class="message-text">${message}</span>`;
+    document.getElementById("chatbotBody").appendChild(messageElement);
+    document.getElementById("chatbotBody").scrollTop = document.getElementById("chatbotBody").scrollHeight;
+}
 
-        function parseCSV(csvText) {
-            const lines = csvText.split(/\r?\n/);
-            if (lines.length < 2) return [];
-            const headers = lines[0].split(',').map(h => h.trim().replace(/^"|"$/g, ''));
-            const data = [];
-            for (let i = 1; i < lines.length; i++) {
-                if (!lines[i].trim()) continue;
-                const values = [];
-                let current = '', inQuotes = false;
-                for (let char of lines[i]) {
-                    if (char === '"') inQuotes = !inQuotes;
-                    else if (char === ',' && !inQuotes) { values.push(current.trim()); current = ''; }
-                    else { current += char; }
-                }
-                values.push(current.trim());
-                const row = {};
-                headers.forEach((h, idx) => row[h] = values[idx] || "");
-                data.push(row);
-            }
-            return data;
-        }
+// Gửi câu hỏi từ người dùng
+async function sendMessage() {
+    const userInput = document.getElementById("userInput").value.trim();
+    if (userInput === "") return;
 
-        // --- UI ACTIONS ---
-        chatToggle.onclick = () => {
-            chatBox.classList.toggle('hidden');
-            document.getElementById('chat-icon-open').classList.toggle('hidden');
-            document.getElementById('chat-icon-close').classList.toggle('hidden');
-            if (!chatBox.classList.contains('hidden')) userInput.focus();
-        };
+    displayMessage(userInput, true);
+    document.getElementById("userInput").value = "";
+    document.getElementById("loadingSpinner").style.display = "block";
 
-        function addMessage(text, role) {
-            const div = document.createElement('div');
-            div.className = `flex items-start ${role === 'user' ? 'justify-end' : ''} animate-fade-in`;
-            const bubbleClass = role === 'user' ? 'user-bubble' : 'bot-bubble border border-gray-100';
-            
-            // Xử lý xuống dòng và đậm
-            const formatted = text
-                .replace(/\*\*(.*?)\*\*/g, '<strong class="text-blue-700">$1</strong>')
-                .replace(/\n/g, '<br>');
-            
-            div.innerHTML = `<div class="${bubbleClass} p-4 rounded-2xl max-w-[85%] text-sm leading-relaxed shadow-sm">${formatted}</div>`;
-            chatMessages.appendChild(div);
-            chatMessages.scrollTo({ top: chatMessages.scrollHeight, behavior: 'smooth' });
-        }
+    const prompt = createPrompt(userInput);
+    const response = await callGeminiAPI(prompt);
+    displayMessage(response);
+    document.getElementById("loadingSpinner").style.display = "none";
+}
 
-        function handleSuggestion(text) {
-            userInput.value = text;
-            chatForm.dispatchEvent(new Event('submit'));
-            const suggestDiv = document.getElementById('quick-suggestions');
-            if(suggestDiv) suggestDiv.style.display = 'none';
-        }
+// Tạo prompt từ câu hỏi của người dùng
+function createPrompt(userInput) {
+    return `
+    Bạn là trợ lý nghề nghiệp AI cho nền tảng Career Pathway trong ngành dầu khí/offshore. 
+    Hãy trả lời câu hỏi của ứng viên dựa trên các dữ liệu từ Roadmap sau:
 
-        // --- AI LOGIC ---
-        async function callGemini(query, retries = 5, delay = 1000) {
-            if (!isDataLoaded) return "Dữ liệu hiện tại chưa được tải xong. Vui lòng đợi trong giây lát hoặc kiểm tra lỗi CORS.";
+    Câu hỏi: ${userInput}
 
-            const systemPrompt = `
-            Bạn là Career AI Assistant chuyên sâu cho ngành Dầu khí/Offshore.
-            DỮ LIỆU ROADMAP (JSON): ${JSON.stringify(masterData.slice(0, 100))} (Đây là mẫu dữ liệu từ Google Sheets).
+    Dữ liệu Roadmap: ${JSON.stringify(roadmapData)}
+    `;
+}
 
-            QUY TẮC PHẢN HỒI:
-            1. Dựa hoàn toàn trên dữ liệu Roadmap. KHÔNG bịa đặt chức danh hoặc thông tin nếu dữ liệu không có.
-            2. Nếu thiếu thông tin để tư vấn, hãy hỏi lại 2-4 câu ngắn để làm rõ (ngành học, sở thích làm văn phòng hay công trường, v.v.).
-            3. Gợi ý tối đa 3 lộ trình (role_title) phù hợp nhất.
-            4. Mỗi gợi ý bao gồm:
-               - **Tên lộ trình/Chức năng**.
-               - **Lý do phù hợp**.
-               - **Vai trò khởi đầu** (Milestone thấp nhất).
-               - **Kỹ năng nên chuẩn bị** (Technical & Behavioral).
-               - **Chứng chỉ/Đào tạo** (Nếu có).
-               - **Định hướng phát triển dài hạn**.
-            5. Nếu thông tin không có trong dữ liệu, hãy nói: "Dữ liệu hiện tại chưa có đủ thông tin về nội dung này."
-            6. Giọng văn: Thân thiện, ngắn gọn, phù hợp sinh viên. KHÔNG cam kết tuyển dụng.
-            `;
+// Gọi API Gemini
+async function callGeminiAPI(prompt) {
+    const response = await fetch('https://api.google.com/v1/gemini', {
+        method: 'POST',
+        headers: {
+            'Authorization': `Bearer ${GEMINI_API_KEY}`,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            prompt: prompt,
+            max_tokens: 150
+        })
+    });
+    const data = await response.json();
+    return data.choices[0].text.trim();
+}
 
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${GEMINI_API_KEY}`;
+// Mở và đóng cửa sổ chatbot
+document.getElementById("chatbotWidget").addEventListener("click", () => {
+    const chatbotWindow = document.getElementById("chatbotWindow");
+    chatbotWindow.style.display = chatbotWindow.style.display === "flex" ? "none" : "flex";
+});
 
-            try {
-                const response = await fetch(url, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        contents: [{ parts: [{ text: query }] }],
-                        systemInstruction: { parts: [{ text: systemPrompt }] }
-                    })
-                });
+// Gửi câu hỏi khi nhấn Enter
+document.getElementById("sendMessageButton").addEventListener("click", sendMessage);
+document.getElementById("userInput").addEventListener("keydown", (event) => {
+    if (event.key === "Enter") {
+        event.preventDefault();
+        sendMessage();
+    }
+});
 
-                if (!response.ok) {
-                    if (response.status === 429 && retries > 0) {
-                        await new Promise(r => setTimeout(r, delay));
-                        return callGemini(query, retries - 1, delay * 2);
-                    }
-                    throw new Error('API Error');
-                }
-
-                const result = await response.json();
-                return result.candidates?.[0]?.content?.parts?.[0]?.text || "Xin lỗi, tôi gặp chút trục trặc khi suy nghĩ. Hãy thử lại nhé.";
-            } catch (err) {
-                if (retries > 0) {
-                    await new Promise(r => setTimeout(r, delay));
-                    return callGemini(query, retries - 1, delay * 2);
-                }
-                return "Kết nối với AI thất bại. Hãy kiểm tra kết nối mạng hoặc API Key của bạn.";
-            }
-        }
-
-        chatForm.onsubmit = async (e) => {
-            e.preventDefault();
-            const text = userInput.value.trim();
-            if (!text || sendBtn.disabled) return;
-
-            addMessage(text, 'user');
-            userInput.value = '';
-            sendBtn.disabled = true;
-
-            const loadingId = "loading-" + Date.now();
-            const loadingDiv = document.createElement('div');
-            loadingDiv.id = loadingId;
-            loadingDiv.className = 'flex items-start';
-            loadingDiv.innerHTML = `<div class="bot-bubble p-4 rounded-2xl text-xs text-gray-400 italic">AI đang phân tích dữ liệu...</div>`;
-            chatMessages.appendChild(loadingDiv);
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-
-            const response = await callGemini(text);
-            
-            document.getElementById(loadingId).remove();
-            addMessage(response, 'bot');
-            sendBtn.disabled = false;
-        };
-
-        // Khởi tạo
-        window.onload = fetchMasterData;
-    </script>
+// Khởi tạo dữ liệu
+fetchData().then(() => {
+    displayMessage("Chào bạn! Tôi là AI Career Assistant. Hãy hỏi tôi về ngành nghề trong dầu khí/offshore!");
+});
+</script>
 </body>
 </html>
