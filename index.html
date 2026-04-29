@@ -1,105 +1,242 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Chatbot AI</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #f4f4f9;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      margin: 0;
-    }
-    .chat-container {
-      width: 400px;
-      max-width: 100%;
-      background-color: white;
-      border-radius: 8px;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-      padding: 20px;
-    }
-    .chat-box {
-      height: 300px;
-      overflow-y: auto;
-      margin-bottom: 10px;
-      padding: 10px;
-      border: 1px solid #ddd;
-      border-radius: 5px;
-      background-color: #f9f9f9;
-    }
-    .input-box {
-      width: 100%;
-      padding: 10px;
-      margin-top: 10px;
-      border: 1px solid #ddd;
-      border-radius: 5px;
-      background-color: #fff;
-    }
-    .button {
-      padding: 10px 20px;
-      background-color: #4CAF50;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-    .button:hover {
-      background-color: #45a049;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gemini AI Chatbox</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <style>
+        /* Tùy chỉnh thanh cuộn */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #e2e8f0;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #cbd5e1;
+        }
+
+        .markdown-content p { margin-bottom: 0.75rem; }
+        .markdown-content p:last-child { margin-bottom: 0; }
+        .markdown-content code { 
+            background-color: #f1f5f9; 
+            padding: 0.2rem 0.4rem; 
+            border-radius: 0.25rem; 
+            font-size: 0.875em;
+        }
+        .markdown-content pre {
+            background-color: #1e293b;
+            color: #f8fafc;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            overflow-x: auto;
+            margin: 1rem 0;
+        }
+        
+        @keyframes typing {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+        .dot { animation: typing 1.4s infinite; }
+        .dot:nth-child(2) { animation-delay: 0.2s; }
+        .dot:nth-child(3) { animation-delay: 0.4s; }
+    </style>
 </head>
-<body>
+<body class="bg-slate-50 h-screen flex flex-col">
 
-<div class="chat-container">
-  <div class="chat-box" id="chatBox"></div>
-  <input type="text" id="userInput" class="input-box" placeholder="Nhập câu hỏi của bạn...">
-  <button class="button" onclick="sendMessage()">Gửi</button>
-</div>
+    <!-- Header -->
+    <header class="bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between shadow-sm">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center text-white">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
+            </div>
+            <div>
+                <h1 class="font-bold text-slate-800 leading-tight">Gemini Assistant</h1>
+                <p class="text-xs text-green-500 flex items-center gap-1">
+                    <span class="w-1.5 h-1.5 bg-green-500 rounded-full"></span> Trực tuyến
+                </p>
+            </div>
+        </div>
+    </header>
 
-<script>
-  const chatBox = document.getElementById('chatBox');
-  const userInput = document.getElementById('userInput');
+    <!-- Chat Messages Container -->
+    <main id="chat-container" class="flex-1 overflow-y-auto p-4 md:p-6 space-y-6">
+        <!-- Welcome Message -->
+        <div class="flex gap-3 max-w-3xl">
+            <div class="w-8 h-8 rounded-full bg-slate-200 flex-shrink-0 flex items-center justify-center text-slate-600">
+                AI
+            </div>
+            <div class="bg-white border border-slate-200 rounded-2xl rounded-tl-none p-4 shadow-sm text-slate-700">
+                Chào bạn! Tôi là trợ lý AI được cung cấp bởi Gemini. Tôi có thể giúp gì cho bạn hôm nay?
+            </div>
+        </div>
+    </main>
 
-  // Function to send message to the API and get the response
-  async function sendMessage() {
-    const userMessage = userInput.value;
-    if (!userMessage) return;
+    <!-- Loading Indicator (Hidden by default) -->
+    <div id="typing-indicator" class="hidden px-6 py-2">
+        <div class="flex items-center gap-2 text-slate-400 text-sm italic">
+            <span>Gemini đang suy nghĩ</span>
+            <div class="flex gap-1">
+                <span class="dot w-1 h-1 bg-slate-400 rounded-full"></span>
+                <span class="dot w-1 h-1 bg-slate-400 rounded-full"></span>
+                <span class="dot w-1 h-1 bg-slate-400 rounded-full"></span>
+            </div>
+        </div>
+    </div>
 
-    // Add user message to the chat box
-    chatBox.innerHTML += `<div><b>Bạn:</b> ${userMessage}</div>`;
-    userInput.value = '';
-    chatBox.scrollTop = chatBox.scrollHeight;
+    <!-- Input Area -->
+    <footer class="p-4 bg-white border-t border-slate-200">
+        <div class="max-w-4xl mx-auto flex gap-2">
+            <textarea 
+                id="user-input" 
+                rows="1" 
+                placeholder="Nhập câu hỏi của bạn tại đây..." 
+                class="flex-1 bg-slate-100 border-none rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 resize-none transition-all outline-none"
+            ></textarea>
+            <button 
+                id="send-btn"
+                class="bg-indigo-600 hover:bg-indigo-700 text-white p-3 rounded-xl transition-colors shadow-lg shadow-indigo-200 flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+            </button>
+        </div>
+        <p class="text-[10px] text-center text-slate-400 mt-2">
+            Sử dụng mô hình Gemini 2.5 Flash Preview.
+        </p>
+    </footer>
 
-    // Send message to the AI API (Gemini API in this example)
-    const response = await callAI(userMessage);
+    <script>
+        const apiKey = ""; // API Key được cung cấp bởi môi trường thực thi
+        const chatContainer = document.getElementById('chat-container');
+        const userInput = document.getElementById('user-input');
+        const sendBtn = document.getElementById('send-btn');
+        const typingIndicator = document.getElementById('typing-indicator');
 
-    // Add AI response to the chat box
-    chatBox.innerHTML += `<div><b>AI:</b> ${response}</div>`;
-    chatBox.scrollTop = chatBox.scrollHeight;
-  }
+        // Tự động điều chỉnh chiều cao textarea
+        userInput.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = (this.scrollHeight) + 'px';
+        });
 
-  // Call API to get the AI response
-  async function callAI(message) {
-    const apiKey = 'YOUR_API_KEY'; // Replace with your own API key
-    const url = 'https://api.gemini.com/v1/chat'; // Replace with your chosen API endpoint
+        // Xử lý gửi tin nhắn
+        async function handleSend() {
+            const message = userInput.value.trim();
+            if (!message) return;
 
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${apiKey}`
-      },
-      body: JSON.stringify({ input: message })
-    });
+            // Vô hiệu hóa input
+            userInput.value = '';
+            userInput.style.height = 'auto';
+            userInput.disabled = true;
+            sendBtn.disabled = true;
 
-    const data = await response.json();
-    return data.reply || 'Xin lỗi, tôi không hiểu câu hỏi của bạn.';
-  }
-</script>
+            // Thêm tin nhắn của user vào UI
+            appendMessage('user', message);
+            
+            // Hiện loading
+            typingIndicator.classList.remove('hidden');
+            scrollToBottom();
 
+            try {
+                const responseText = await callGeminiAPI(message);
+                appendMessage('ai', responseText);
+            } catch (error) {
+                appendMessage('error', 'Rất tiếc, đã xảy ra lỗi khi kết nối với máy chủ. Vui lòng thử lại sau.');
+            } finally {
+                typingIndicator.classList.add('hidden');
+                userInput.disabled = false;
+                sendBtn.disabled = false;
+                userInput.focus();
+                scrollToBottom();
+            }
+        }
+
+        // Gọi API Gemini với cơ chế Exponential Backoff
+        async function callGeminiAPI(prompt, retries = 5, delay = 1000) {
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+            
+            const payload = {
+                contents: [{
+                    parts: [{ text: prompt }]
+                }],
+                systemInstruction: {
+                    parts: [{ text: "Bạn là một trợ lý ảo hữu ích, trả lời ngắn gọn, lịch sự và sử dụng ngôn ngữ Tiếng Việt." }]
+                }
+            };
+
+            for (let i = 0; i < retries; i++) {
+                try {
+                    const response = await fetch(url, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+
+                    const result = await response.json();
+                    return result.candidates?.[0]?.content?.parts?.[0]?.text || "Tôi không nhận được phản hồi phù hợp.";
+                } catch (error) {
+                    if (i === retries - 1) throw error;
+                    await new Promise(resolve => setTimeout(resolve, delay));
+                    delay *= 2; // Tăng thời gian chờ (exponential backoff)
+                }
+            }
+        }
+
+        // Hiển thị tin nhắn lên màn hình
+        function appendMessage(role, text) {
+            const wrapper = document.createElement('div');
+            wrapper.className = `flex gap-3 ${role === 'user' ? 'justify-end' : 'justify-start'} max-w-full animate-in fade-in slide-in-from-bottom-2 duration-300`;
+
+            const iconHtml = role === 'user' 
+                ? `<div class="w-8 h-8 rounded-full bg-indigo-100 flex-shrink-0 flex items-center justify-center text-indigo-600 order-2">Bạn</div>`
+                : `<div class="w-8 h-8 rounded-full bg-slate-200 flex-shrink-0 flex items-center justify-center text-slate-600">AI</div>`;
+
+            const bubbleClass = role === 'user'
+                ? 'bg-indigo-600 text-white rounded-2xl rounded-tr-none shadow-md'
+                : role === 'error'
+                    ? 'bg-red-50 border border-red-200 text-red-600 rounded-2xl shadow-sm'
+                    : 'bg-white border border-slate-200 text-slate-700 rounded-2xl rounded-tl-none shadow-sm';
+
+            const contentHtml = role === 'ai' 
+                ? `<div class="markdown-content prose prose-slate max-w-none">${marked.parse(text)}</div>`
+                : `<div class="whitespace-pre-wrap">${text}</div>`;
+
+            wrapper.innerHTML = `
+                ${iconHtml}
+                <div class="${bubbleClass} p-4 max-w-[85%] md:max-w-[70%]">
+                    ${contentHtml}
+                </div>
+            `;
+
+            chatContainer.appendChild(wrapper);
+            scrollToBottom();
+        }
+
+        function scrollToBottom() {
+            chatContainer.scrollTo({
+                top: chatContainer.scrollHeight,
+                behavior: 'smooth'
+            });
+        }
+
+        // Sự kiện phím Enter
+        userInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                handleSend();
+            }
+        });
+
+        sendBtn.addEventListener('click', handleSend);
+    </script>
 </body>
 </html>
