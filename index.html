@@ -1494,7 +1494,7 @@
             if (!aiBotGeminiApiKey) {
                 const errDiv = document.createElement('div');
                 errDiv.className = 'ai-bot-bubble ai-bot-bubble-bot text-rose-500 font-bold';
-                errDiv.innerText = "Chưa có API key để kết nối AI.";
+                errDiv.innerText = "Chưa thể kết nối với AI...";
                 messagesContainer.appendChild(errDiv);
                 messagesContainer.scrollTop = messagesContainer.scrollHeight;
                 return;
