@@ -343,7 +343,7 @@
 
         #ai-bot-panel {
             position: fixed; z-index: 1001;
-            width: 420px; max-width: calc(100vw - 32px); height: 620px; max-height: calc(100vh - 150px);
+            width: 420px; max-width: calc(100vw - 24px); height: 620px; max-height: calc(100vh - 150px);
             background: white; border-radius: 32px; box-shadow: 0 25px 70px -10px rgba(0,0,0,0.2);
             display: flex; flex-direction: column; overflow: hidden;
             transition: opacity 0.3s, transform 0.3s;
@@ -362,7 +362,6 @@
         .ai-bot-bubble-user { align-self: flex-end; background: #2563eb; color: white; border-bottom-right-radius: 4px; font-weight: 600; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.1); }
         .ai-bot-bubble-bot { align-self: flex-start; background: white; color: #1e293b; border-bottom-left-radius: 4px; box-shadow: 0 4px 10px rgba(0,0,0,0.02); border: 1px solid #f1f5f9; }
 
-        /* AI BOT COMPACT MARKDOWN STYLE - NO BR */
         .ai-bot-markdown { 
             line-height: 1.35; 
             color: #1e293b;
@@ -809,10 +808,8 @@
 6. Với mỗi lộ trình, chỉ nêu: Vị trí phù hợp, lý do, kỹ năng cần chuẩn bị, bước tiếp theo.
 7. Nếu người dùng hỏi về mức thu nhập, lương, đãi ngộ hoặc phúc lợi, hãy sử dụng dữ liệu salary và benefit nếu có.
 8. Khi trả lời về lương hoặc thu nhập, luôn nói rõ đây chỉ là mức tham khảo. Thực tế phụ thuộc vào kinh nghiệm, năng lực, vị trí, cấp bậc, phạm vi công việc, dự án tham gia, hiệu quả công việc và chính sách lương thưởng từng thời kỳ của Công ty.
-9. Khi trả lời nhiều nhóm nội dung, hãy chia thành các đầu mục rõ ràng. Đầu mục nên viết trên một dòng riêng, ví dụ:
-Mức thu nhập tham khảo:
-- Cấp bậc Entry: ...
-10. Ngôn ngữ: tiếng Việt, rõ ràng, chuyên nghiệp. Không dùng emoji.`;
+9. Khi trả lời nhiều nhóm nội dung, hãy chia thành các đầu mục rõ ràng. Đầu mục nên viết trên một dòng riêng.
+10. Ngôn ngữ: tiếng Việt, rõ ràng, chuyên nghiệp. Không dùng emoji, ký tự trang trí như #, @. Không dùng dấu gạch ngang làm bullet thô. Nếu nêu khoảng giá, dùng chữ "đến" thay cho dấu gạch ngang.`;
     /* AI BOT WIDGET CONFIG END */
 
     const progressionColors = ['#10b981', '#0ea5e9', '#6366f1', '#8b5cf6', '#d946ef', '#f59e0b'];
@@ -922,15 +919,23 @@ Mức thu nhập tham khảo:
             const configResponse = await fetch('./config.json');
             if (!configResponse.ok) throw new Error('Không tìm thấy file config.json');
             const config = await configResponse.json();
-            const response = await fetch(config.sheetUrl);
-            if (!response.ok) throw new Error(`Không thể tải dữ liệu. HTTP ${response.status}`);
-            const csvText = await response.text();
-            masterData = parseCSV(csvText);
+            
+            // Tải dữ liệu song song
+            const [roadmapRes, benefitRes] = await Promise.all([
+                fetch(config.sheetUrl),
+                fetch(config.sheetUrl2)
+            ]);
 
-            const benefitResponse = await fetch(config.sheetUrl2);
-            if (!benefitResponse.ok) throw new Error('Không thể tải dữ liệu Benefit');
-            const benefitCsvText = await benefitResponse.text();
+            if (!roadmapRes.ok || !benefitRes.ok) throw new Error(`Lỗi kết nối dữ liệu.`);
+
+            const [csvText, benefitCsvText] = await Promise.all([
+                roadmapRes.text(),
+                benefitRes.text()
+            ]);
+
+            masterData = parseCSV(csvText);
             const benefitData = parseCSV(benefitCsvText);
+            
             salaryBenefitData = benefitData.filter(d => d.milestone_level && d.salary);
             benefitListData = benefitData.filter(d => d.benefit);
 
@@ -1336,6 +1341,7 @@ Mức thu nhập tham khảo:
             panel.style.transformOrigin = `${originY} ${originX}`;
         }
 
+        // --- KÉO THẢ & CLICK ---
         let startX, startY, initLeft, initBottom;
         function onDragStart(e) {
             const touch = e.type === 'touchstart' ? e.touches[0] : e;
@@ -1388,10 +1394,13 @@ Mức thu nhập tham khảo:
         }
         closeBtn.onclick = () => aiBotTogglePanel();
 
+        // --- HỆ THỐNG XỬ LÝ TEXT & RENDER CẤU TRÚC ---
         function aiBotNormalizeMarkdownText(text) {
             if (!text) return "";
             return text
-                .replace(/[\u{1F300}-\u{1F6FF}\u{1F900}-\u{1F9FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/gu, '')
+                .replace(/[\u{1F300}-\u{1F6FF}\u{1F900}-\u{1F9FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/gu, '') // Xóa emoji
+                .replace(/[#@]/g, '') // Xóa ký tự trang trí #, @
+                .replace(/(\d+)\s*-\s*(\d+)/g, '$1 đến $2') // Chuyển "15 - 20" thành "15 đến 20"
                 .replace(/\r\n/g, '\n')
                 .replace(/\n\s*\n+/g, '\n')
                 .trim();
@@ -1399,11 +1408,8 @@ Mức thu nhập tham khảo:
 
         function aiBotEscapeHtml(unsafe) {
             return unsafe
-                 .replace(/&/g, "&amp;")
-                 .replace(/</g, "&lt;")
-                 .replace(/>/g, "&gt;")
-                 .replace(/"/g, "&quot;")
-                 .replace(/'/g, "&#039;");
+                 .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+                 .replace(/"/g, "&quot;").replace(/'/g, "&#039;");
         }
 
         function aiBotRenderInlineMarkdown(text) {
@@ -1422,7 +1428,7 @@ Mức thu nhập tham khảo:
             ];
             return (
                 /^(\d+)[.\)]\s+.+/.test(clean) ||
-                /^(Option|Lựa chọn|Hướng|Nhóm)\s*\d+\s*[:\-]\s*.+/i.test(clean) ||
+                /^(Option|Lựa chọn|Hướng|Nhóm|Mục)\s*\d+\s*[:\-]\s*.+/i.test(clean) ||
                 headingKeywords.some(k => clean.toLowerCase().includes(k.toLowerCase())) ||
                 (clean.length <= 60 && /[:：]$/.test(line.trim()))
             );
@@ -1449,8 +1455,8 @@ Mức thu nhập tham khảo:
 
             lines.forEach((line, index) => {
                 const sectionMatch = line.match(sectionPattern);
-                const bulletMatch = line.match(bulletPattern);
                 const isHeading = aiBotIsSectionHeading(line);
+                const bulletMatch = line.match(bulletPattern);
                 
                 if (sectionMatch || isHeading) {
                     flushList();
@@ -1483,6 +1489,53 @@ Mức thu nhập tham khảo:
             return finalHtml ? `<div class="ai-bot-markdown">${finalHtml}</div>` : `<p>${aiBotRenderInlineMarkdown(aiBotEscapeHtml(clean))}</p>`;
         }
 
+        // --- OPTIMIZED DATA RETRIEVAL (RAG) ---
+        function aiBotNormalizeSearchText(value) {
+            if (!value) return "";
+            return value.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^\w\s]/gi, '');
+        }
+
+        function aiBotGetQueryIntent(query) {
+            const q = query.toLowerCase();
+            if (/\b(lương|thu nhập|salary|phúc lợi|benefit|đãi ngộ)\b/.test(q)) return "compensation";
+            if (/\b(pos|ptsc|công ty|dự án|tuyển dụng)\b/.test(q)) return "company";
+            if (/\b(kỹ năng|skill|chứng chỉ|đào tạo|học|phần mềm)\b/.test(q)) return "skills";
+            if (/\b(lộ trình|thăng tiến|cấp bậc|senior|lead|expert|career)\b/.test(q)) return "career_path";
+            return "general";
+        }
+
+        function aiBotPickRelevantRows(query) {
+            const intent = aiBotGetQueryIntent(query);
+            const qNorm = aiBotNormalizeSearchText(query);
+            const tokens = qNorm.split(/\s+/).filter(t => t.length > 2 && !['toi','anh','chi','can','la','gi','nen'].includes(t));
+            
+            const scored = masterData.map(row => {
+                let score = 0;
+                const rowText = aiBotNormalizeSearchText(Object.values(row).join(' '));
+                
+                tokens.forEach(t => { if (rowText.includes(t)) score += 1; });
+                
+                // Trọng số cho các trường quan trọng
+                if (tokens.some(t => aiBotNormalizeSearchText(row.role_title).includes(t))) score += 5;
+                if (tokens.some(t => aiBotNormalizeSearchText(row.function_title).includes(t))) score += 5;
+
+                // Ưu tiên Career Path đang chọn
+                if (selectedRoleValue && row.function_title === selectedRoleValue) score += 3;
+
+                return { row, score };
+            });
+
+            const filtered = scored.filter(s => s.score > 0).sort((a,b) => b.score - a.score);
+            
+            if (filtered.length === 0) return masterData.slice(0, 8);
+            return filtered.slice(0, 12).map(s => s.row);
+        }
+
+        function aiBotBuildCompactKnowledge(rows) {
+            return rows.map((r, i) => `[Dòng ${i+1}] Lộ trình: ${r.function_title} | Cấp: ${r.milestone_level} | Vị trí: ${r.role_title} | Trách nhiệm: ${r.key_responsibilities.slice(0, 150)} | Kỹ năng: ${r.competencies_to_develop} | Tiêu chí thăng cấp: ${r.promotion_criteria}`).join('\n');
+        }
+
+        // --- TYPEWRITING ---
         async function aiBotTypewrite(element, fullText) {
             aiBotState.isTyping = true;
             input.disabled = true; sendBtn.disabled = true;
@@ -1497,12 +1550,13 @@ Mức thu nhập tham khảo:
                 const words = line.split(' ');
                 let currentLineTyped = "";
                 
-                for (let j = 0; j < words.length; j++) {
-                    currentLineTyped += words[j] + " ";
-                    // Render HTML ngay trong quá trình gõ
+                // Type by word clusters for smoothness
+                for (let j = 0; j < words.length; j += 2) {
+                    const chunk = words.slice(j, j + 2).join(' ') + " ";
+                    currentLineTyped += chunk;
                     element.innerHTML = aiBotParseStructuredResponse(partialContent + currentLineTyped);
                     messagesContainer.scrollTop = messagesContainer.scrollHeight;
-                    await new Promise(r => setTimeout(r, 12));
+                    await new Promise(r => setTimeout(r, 25));
                 }
                 partialContent += line + "\n";
             }
@@ -1519,7 +1573,6 @@ Mức thu nhập tham khảo:
                 errDiv.className = 'ai-bot-bubble ai-bot-bubble-bot text-rose-500 font-bold';
                 errDiv.innerText = "Chưa có API key để kết nối AI.";
                 messagesContainer.appendChild(errDiv);
-                messagesContainer.scrollTop = messagesContainer.scrollHeight;
                 return;
             }
             const query = customText || input.value.trim();
@@ -1543,20 +1596,27 @@ Mức thu nhập tham khảo:
                 bDiv.innerHTML = ""; 
                 await aiBotTypewrite(bDiv, response);
             } catch (err) {
-                bDiv.innerText = "Lỗi kết nối: " + err.message;
+                bDiv.innerText = "Lỗi: " + err.message;
                 input.disabled = false; sendBtn.disabled = false;
             }
         }
 
         async function aiBotFetchAI(prompt, retry = 0) {
-            const kb = JSON.stringify((typeof masterData !== 'undefined' ? masterData : []).slice(0, 50));
+            const intent = aiBotGetQueryIntent(prompt);
+            const relevantRows = (intent === "compensation") ? [] : aiBotPickRelevantRows(prompt);
+            const kb = (intent === "compensation") 
+                ? "Dữ liệu Roadmap nén không cần thiết cho câu hỏi về thu nhập." 
+                : aiBotBuildCompactKnowledge(relevantRows);
+
             const systemPrompt = `Bạn là trợ lý tư vấn lộ trình nghề nghiệp dựa trên dữ liệu Roadmap nội bộ.
 
-DỮ LIỆU ROADMAP CSV:
+LOẠI CÂU HỎI: ${intent}
+
+DỮ LIỆU ROADMAP LIÊN QUAN:
 ${kb}
 
 DỮ LIỆU THU NHẬP, ĐÃI NGỘ, PHÚC LỢI THAM KHẢO:
-${aiBotCompensationData || "Không có dữ liệu thu nhập, đãi ngộ, phúc lợi cụ thể."}
+${intent === "compensation" ? (aiBotCompensationData || "Không có dữ liệu thu nhập cụ thể.") : "Sử dụng khi được hỏi về đãi ngộ."}
 
 ${aiBotAnswerRule}`;
 
@@ -1577,9 +1637,9 @@ ${aiBotAnswerRule}`;
                         await new Promise(r => setTimeout(r, aiBotConfig.retryDelays[retry]));
                         return aiBotFetchAI(prompt, retry + 1);
                     }
-                    throw new Error(msg || "Lỗi kết nối");
+                    throw new Error(msg || "Lỗi API");
                 }
-                return data.candidates?.[0]?.content?.parts?.[0]?.text || "Không tìm thấy phản hồi phù hợp.";
+                return data.candidates?.[0]?.content?.parts?.[0]?.text || "Không có phản hồi.";
             } catch (e) {
                 if (retry < 3 && e.message.includes("high demand")) {
                     await new Promise(r => setTimeout(r, aiBotConfig.retryDelays[retry]));
