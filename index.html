@@ -362,7 +362,7 @@
         .ai-bot-bubble-user { align-self: flex-end; background: #2563eb; color: white; border-bottom-right-radius: 4px; font-weight: 600; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.1); }
         .ai-bot-bubble-bot { align-self: flex-start; background: white; color: #1e293b; border-bottom-left-radius: 4px; box-shadow: 0 4px 10px rgba(0,0,0,0.02); border: 1px solid #f1f5f9; }
 
-        /* AI BOT COMPACT MARKDOWN STYLE */
+        /* AI BOT COMPACT MARKDOWN STYLE - NO BR */
         .ai-bot-markdown { 
             line-height: 1.35; 
             color: #1e293b;
@@ -371,16 +371,22 @@
         .ai-bot-markdown strong { font-weight: 700; color: #2563eb; }
         .ai-bot-markdown p { margin: 0; padding: 0; }
         .ai-bot-markdown p + p { margin-top: 0.15rem; }
-        .ai-bot-markdown ul, .ai-bot-markdown ol { 
-            margin: 0.1rem 0 0.1rem 1rem; 
-            padding-left: 0.8rem; 
+        
+        .ai-bot-markdown ul, 
+        .ai-bot-response-list { 
+            margin: 0; 
+            padding: 0;
+            padding-left: 1rem; 
             list-style-type: disc;
         }
-        .ai-bot-markdown li { 
+        .ai-bot-markdown li,
+        .ai-bot-response-list li { 
             margin: 0; 
             padding: 0; 
+            line-height: 1.35;
         }
-        .ai-bot-markdown li + li { margin-top: 0.08rem; }
+        .ai-bot-response-list li + li { margin-top: 0.12rem; }
+        
         .ai-bot-markdown h1, .ai-bot-markdown h2, .ai-bot-markdown h3, .ai-bot-markdown h4 { 
             margin: 0.2rem 0 0.1rem 0; 
             padding: 0; 
@@ -388,7 +394,7 @@
             font-weight: 800;
             color: #0f172a;
         }
-        .ai-bot-markdown br { line-height: 1; }
+        .ai-bot-markdown br { display: none; }
 
         .ai-bot-input-area { padding: 14px; background: white; border-top: 1px solid #f1f5f9; }
         .ai-bot-input-container { display: flex; gap: 8px; align-items: center; }
@@ -824,7 +830,7 @@
         if (!container) return;
         const toast = document.createElement('div');
         toast.className = 'bg-white/95 backdrop-blur-xl border-l-4 border-amber-500 text-slate-800 px-6 py-4 rounded-2xl shadow-2xl flex items-center gap-3 animate-up pointer-events-auto';
-        toast.innerHTML = `<div class="bg-amber-100 p-2 rounded-full shrink-0"><i data-lucide=\"alert-circle\" class=\"w-5 h-5 text-amber-600\"></i></div><span class=\"font-bold text-[15px]\">${message}</span>`;
+        toast.innerHTML = `<div class=\"bg-amber-100 p-2 rounded-full shrink-0\"><i data-lucide=\"alert-circle\" class=\"w-5 h-5 text-amber-600\"></i></div><span class=\"font-bold text-[15px]\">${message}</span>`;
         container.appendChild(toast);
         lucide.createIcons();
         setTimeout(() => { toast.style.opacity = '0'; toast.style.transform = 'translateY(20px)'; toast.style.transition = 'all 0.4s ease'; setTimeout(() => toast.remove(), 400); }, 3000);
@@ -924,7 +930,6 @@
                 }
             }
 
-            // Dựng Compensation Data cho Knowledge Base
             let compText = "";
             benefitData.forEach(row => {
                 if (row.milestone_level || row.salary || row.benefit) {
@@ -1179,22 +1184,22 @@
         document.getElementById('salaryLevelText').innerText = data.milestone_level;
         document.getElementById('salaryRangeDisplay').innerText = getSalaryRange(data.milestone_level);
         document.getElementById('salaryProgressBar').style.width = `${vsl.progress}%`;
-        document.getElementById('levelBadgeIcon').innerHTML = `<span class="text-3xl">${vsl.iconName}</span>`;
-        document.getElementById('salaryLevelIconBg').innerHTML = `<i data-lucide="${vsl.icon}" class="w-64 h-64 text-primary-500"></i>`;
+        document.getElementById('levelBadgeIcon').innerHTML = `<span class=\"text-3xl\">${vsl.iconName}</span>`;
+        document.getElementById('salaryLevelIconBg').innerHTML = `<i data-lucide=\"${vsl.icon}\" class=\"w-64 h-64 text-primary-500\"></i>`;
 
         const benList = document.getElementById('fixedBenefitsList');
         benList.innerHTML = '';
         benefitListData.forEach((b, index) => {
             const iconList = ['umbrella', 'palmtree', 'users', 'trophy', 'heart', 'gift', 'anchor', 'shield-plus', 'stethoscope', 'graduation-cap'];
             const icon = iconList[index % iconList.length];
-            benList.innerHTML += `<div class="benefit-item-card"><i data-lucide="${icon}" class="w-5 h-5 text-primary-600 shrink-0"></i><span class="text-[14px] font-bold text-slate-700">${b.benefit}</span></div>`;
+            benList.innerHTML += `<div class=\"benefit-item-card\"><i data-lucide=\"${icon}\" class=\"w-5 h-5 text-primary-600 shrink-0\"></i><span class=\"text-[14px] font-bold text-slate-700\">${b.benefit}</span></div>`;
         });
         
         const stepper = document.getElementById('detailStepper'); if(stepper) {
             stepper.innerHTML = '';
             currentRoleMilestones.forEach((m, i) => {
                 const div = document.createElement('div'); div.className = `dashboard-stepper-item ${i === currentIdx ? 'active' : (i < currentIdx ? 'completed' : '')}`;
-                div.innerHTML = `<div class="stepper-num">${i+1}</div><div class="flex flex-col"><span class="text-[15px] font-black uppercase text-slate-400">${m.milestone_level}</span><span class="text-[15px] font-bold text-slate-800 leading-tight pr-2">${m.role_title}</span></div>`;
+                div.innerHTML = `<div class=\"stepper-num\">${i+1}</div><div class=\"flex flex-col\"><span class=\"text-[15px] font-black uppercase text-slate-400\">${m.milestone_level}</span><span class=\"text-[15px] font-bold text-slate-800 leading-tight pr-2\">${m.role_title}</span></div>`;
                 div.onclick = () => { currentIdx = i; renderDashboard(); }; stepper.appendChild(div);
             });
         }
@@ -1206,13 +1211,13 @@
         
         const kpiList = document.getElementById('kpiContainer'); kpiList.innerHTML = '';
         if(data.key_outputs_kpis) data.key_outputs_kpis.split(/[\n•·-]/).filter(s => s.trim().length > 5).forEach(kpi => {
-            kpiList.innerHTML += `<div class="bg-primary-50/50 p-4 rounded-2xl border border-primary-100 flex items-center gap-3"><div class="w-2 h-2 rounded-full bg-primary-500"></div><span class="text-[15px] font-bold text-slate-700">${kpi.trim()}</span></div>`;
+            kpiList.innerHTML += `<div class=\"bg-primary-50/50 p-4 rounded-2xl border border-primary-100 flex items-center gap-3\"><div class=\"w-2 h-2 rounded-full bg-primary-500\"></div><span class=\"text-[15px] font-bold text-slate-700\">${kpi.trim()}</span></div>`;
         });
 
         const compCon = document.getElementById('competenciesContainer'); compCon.innerHTML = '';
         if(data.competencies_to_develop) data.competencies_to_develop.split(/[\n•·-]/).filter(s => s.trim().length > 3).forEach((item, i) => {
             const lvl = [86, 75, 96, 65, 80][i % 5];
-            compCon.innerHTML += `<div class="skill-bar-container"><div class="flex justify-between text-[15px] font-black uppercase text-slate-500"><span>${item.trim()}</span><span>${lvl}%</span></div><div class="skill-bar-bg"><div class="skill-bar-fill" style="width: ${lvl}%"></div></div></div>`;
+            compCon.innerHTML += `<div class=\"skill-bar-container\"><div class=\"flex justify-between text-[15px] font-black uppercase text-slate-500\"><span>${item.trim()}</span><span>${lvl}%</span></div><div class=\"skill-bar-bg\"><div class=\"skill-bar-fill\" style=\"width: ${lvl}%\"></div></div></div>`;
         });
 
         const behCon = document.getElementById('behavioralContainer'); behCon.innerHTML = '';
@@ -1222,7 +1227,7 @@
 
         const toolCon = document.getElementById('toolsContainer'); toolCon.innerHTML = '';
         if(data.technical_skills_tools) data.technical_skills_tools.split(/[\n•·-]/).filter(s => s.trim().length > 3).forEach(tool => {
-            toolCon.innerHTML += `<div class="tool-list-item flex items-center gap-2 mb-2"><i data-lucide="chevron-right" class="w-4 h-4 text-primary-500"></i><span class="text-[15px] font-semibold">${tool.trim()}</span></div>`;
+            toolCon.innerHTML += `<div class=\"tool-list-item flex items-center gap-2 mb-2\"><i data-lucide=\"chevron-right\" class=\"w-4 h-4 text-primary-500\"></i><span class=\"text-[15px] font-semibold\">${tool.trim()}</span></div>`;
         });
 
         renderBulletList('trainingList', data.suggested_training_development, 'graduation-cap', 'primary');
@@ -1234,7 +1239,7 @@
         
         const certCon = document.getElementById('certList'); certCon.innerHTML = '';
         if(data.recommended_certifications) data.recommended_certifications.split(/[\n•·,]/).filter(s => s.trim().length > 2).forEach(c => {
-            certCon.innerHTML += `<div class="px-4 py-2 rounded-xl bg-amber-50 text-amber-700 border border-amber-100 font-bold text-[15px]">${c.trim()}</div>`;
+            certCon.innerHTML += `<div class=\"px-4 py-2 rounded-xl bg-amber-50 text-amber-700 border border-amber-100 font-bold text-[15px]\">${c.trim()}</div>`;
         });
 
         document.getElementById('pageCounter').innerText = `${String(currentIdx+1).padStart(2, '0')} / ${String(currentRoleMilestones.length).padStart(2, '0')}`;
@@ -1248,25 +1253,25 @@
 
     function formatSidebarList(id, text) {
         const container = document.getElementById(id); if(!container) return; container.innerHTML = '';
-        if(!text) { container.innerHTML = '<span class="text-[15px] italic opacity-60">N/A</span>'; return; }
+        if(!text) { container.innerHTML = '<span class=\"text-[15px] italic opacity-60\">N/A</span>'; return; }
         text.split(/[\n•·-]/).filter(s => s.trim().length > 5).forEach(item => {
-            container.innerHTML += `<div class="info-item-list"><div class="dot"></div><span>${item.trim()}</span></div>`;
+            container.innerHTML += `<div class=\"info-item-list\"><div class=\"dot\"></div><span>${item.trim()}</span></div>`;
         });
     }
 
     function formatSidebarListDynamic(id, text) {
         const container = document.getElementById(id); if(!container) return; container.innerHTML = '';
-        if(!text) { container.innerHTML = '<div class="text-[15px] italic opacity-60">N/A</div>'; return; }
+        if(!text) { container.innerHTML = '<div class=\"text-[15px] italic opacity-60\">N/A</div>'; return; }
         text.split(/[\n•·-]/).filter(s => s.trim().length > 5).forEach(item => {
-            container.innerHTML += `<div class="dynamic-bullet"><div class="white-dot"></div><span class="dynamic-content-list">${item.trim()}</span></div>`;
+            container.innerHTML += `<div class=\"dynamic-bullet\"><div class=\"white-dot\"></div><span class=\"dynamic-content-list\">${item.trim()}</span></div>`;
         });
     }
 
     function renderBulletList(id, text, icon, color, isResp = false) {
         const el = document.getElementById(id); if (!el) return; el.innerHTML = '';
-        if(!text) return el.innerHTML = '<div class="text-slate-400 italic text-[15px]">N/A</div>';
+        if(!text) return el.innerHTML = '<div class=\"text-slate-400 italic text-[15px]\">N/A</div>';
         text.split(/[\n•·-]/).filter(s => s.trim().length > 3).forEach(item => {
-            el.innerHTML += `<div class="${isResp ? 'responsibility-card' : 'flex gap-4 items-start bg-white/60 p-4 rounded-2xl border border-slate-50 shadow-sm mb-3'}"><i data-lucide="${icon}" class="w-5 h-5 text-${color}-600 mt-0.5 shrink-0"></i><span class="text-[15px] font-medium text-slate-700 leading-relaxed">${item.trim()}</span></div>`;
+            el.innerHTML += `<div class=\"${isResp ? 'responsibility-card' : 'flex gap-4 items-start bg-white/60 p-4 rounded-2xl border border-slate-50 shadow-sm mb-3'}\"><i data-lucide=\"${icon}\" class=\"w-5 h-5 text-${color}-600 mt-0.5 shrink-0\"></i><span class=\"text-[15px] font-medium text-slate-700 leading-relaxed\">${item.trim()}</span></div>`;
         });
     }
 
@@ -1316,14 +1321,14 @@
             const rect = trigger.getBoundingClientRect();
             const panelWidth = Math.min(420, window.innerWidth - 32);
             const panelHeight = Math.min(620, window.innerHeight - 150);
-            const margin = 16;
+            const margin = 12;
 
             const isLeftSide = rect.left < window.innerWidth / 2;
             const isTopHalf = rect.top < window.innerHeight / 2;
 
             let left, top;
             if (isLeftSide) { left = rect.left; } else { left = rect.right - panelWidth; }
-            if (isTopHalf) { top = rect.bottom + 12; } else { top = rect.top - panelHeight - 12; }
+            if (isTopHalf) { top = rect.bottom + 10; } else { top = rect.top - panelHeight - 10; }
 
             left = Math.max(margin, Math.min(left, window.innerWidth - panelWidth - margin));
             top = Math.max(margin, Math.min(top, window.innerHeight - panelHeight - margin));
@@ -1354,8 +1359,8 @@
             if (Math.abs(dx) > 5 || Math.abs(dy) > 5) {
                 aiBotState.isDragging = true;
                 let newLeft = initLeft + dx; let newBottom = initBottom - dy;
-                newLeft = Math.max(10, Math.min(window.innerWidth - 75, newLeft));
-                newBottom = Math.max(10, Math.min(window.innerHeight - 75, newBottom));
+                newLeft = Math.max(5, Math.min(window.innerWidth - 70, newLeft));
+                newBottom = Math.max(5, Math.min(window.innerHeight - 70, newBottom));
                 trigger.style.left = newLeft + 'px';
                 trigger.style.bottom = newBottom + 'px';
                 aiBotState.pos = { left: newLeft, bottom: newBottom };
@@ -1390,22 +1395,49 @@
         }
         closeBtn.onclick = () => aiBotTogglePanel();
 
+        // --- NEW RENDER LOGIC: LIST-BASED & COMPACT ---
         function aiBotNormalizeMarkdownText(text) {
             if (!text) return "";
-            // Xóa emoji, icon trang trí (common range)
-            let cleaned = text.replace(/[\u{1F300}-\u{1F6FF}\u{1F900}-\u{1F9FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/gu, '');
-            // Làm sạch dòng trống thừa, trim
-            return cleaned.trim()
+            return text
+                .replace(/[\u{1F300}-\u{1F6FF}\u{1F900}-\u{1F9FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/gu, '')
                 .replace(/\r\n/g, '\n')
-                .replace(/\n{2,}/g, '\n\n'); 
+                .replace(/\n\s*\n+/g, '\n')
+                .trim();
+        }
+
+        function aiBotEscapeHtml(unsafe) {
+            return unsafe
+                 .replace(/&/g, "&amp;")
+                 .replace(/</g, "&lt;")
+                 .replace(/>/g, "&gt;")
+                 .replace(/"/g, "&quot;")
+                 .replace(/'/g, "&#039;");
+        }
+
+        function aiBotRenderInlineMarkdown(text) {
+            return text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
         }
 
         function aiBotParseMarkdown(text) {
-            return text
-                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-                .replace(/^\* (.*$)/gm, '<li>$1</li>')
-                .replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>')
-                .replace(/\n/g, '<br>');
+            const clean = aiBotNormalizeMarkdownText(text);
+            const lines = clean
+                .split(/\n+/)
+                .map(line => line.trim())
+                .filter(Boolean)
+                .map(line => line
+                    .replace(/^[-*•·]\s*/, '')
+                    .replace(/^\d+[\.)]\s*/, '')
+                    .trim()
+                )
+                .filter(Boolean);
+
+            if (lines.length <= 1) {
+                return `<p>${aiBotRenderInlineMarkdown(aiBotEscapeHtml(lines[0] || ''))}</p>`;
+            }
+
+            return `<ul class="ai-bot-response-list">` +
+                lines.map(line => `<li>${aiBotRenderInlineMarkdown(aiBotEscapeHtml(line))}</li>`).join('') +
+                `</ul>`;
         }
 
         async function aiBotTypewrite(element, fullText) {
@@ -1418,12 +1450,18 @@
             let displayed = "";
             const words = normalizedText.split(' ');
             
+            // Type raw text first for fluid animation
             for (let i = 0; i < words.length; i++) {
                 displayed += words[i] + " ";
-                element.innerHTML = aiBotParseMarkdown(displayed);
+                element.innerText = displayed; 
                 messagesContainer.scrollTop = messagesContainer.scrollHeight;
-                await new Promise(r => setTimeout(r, 20));
+                await new Promise(r => setTimeout(r, 15));
             }
+
+            // Once finished, apply final list structure
+            element.innerHTML = aiBotParseMarkdown(fullText);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
             aiBotState.isTyping = false;
             input.disabled = false; sendBtn.disabled = false;
             statusLabel.style.display = 'none';
@@ -1451,7 +1489,7 @@
 
             const bDiv = document.createElement('div');
             bDiv.className = 'ai-bot-bubble ai-bot-bubble-bot';
-            bDiv.innerHTML = `<div class="ai-bot-thinking"><div class="ai-bot-dot"></div><div class="ai-bot-dot"></div><div class="ai-bot-dot"></div></div>`;
+            bDiv.innerHTML = `<div class=\"ai-bot-thinking\"><div class=\"ai-bot-dot\"></div><div class=\"ai-bot-dot\"></div><div class=\"ai-bot-dot\"></div></div>`;
             messagesContainer.appendChild(bDiv);
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
 
