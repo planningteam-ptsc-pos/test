@@ -316,19 +316,19 @@
         #ai-bot-trigger {
             position: fixed; z-index: 1000;
             width: 65px; height: 65px; cursor: pointer; 
-            background: linear-gradient(135deg, #0ea5e9 0%, #6366f1 100%);
+            background: linear-gradient(135deg, #4f46e5 0%, #2563eb 100%);
             border-radius: 50%; display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 10px 25px rgba(14, 165, 233, 0.4);
+            box-shadow: 0 10px 25px rgba(37, 99, 235, 0.4);
             transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             touch-action: none; user-select: none;
         }
         #ai-bot-trigger:hover { transform: scale(1.1); }
         #ai-bot-trigger i { color: white; font-size: 26px; pointer-events: none; }
 
-        /* Pulse Circle Effect */
+        /* Pulse Circle Effect - Circular Only */
         #ai-bot-trigger::before {
             content: ''; position: absolute; inset: 0; border-radius: 50%;
-            background: #0ea5e9; z-index: -1; opacity: 0.5;
+            background: #4f46e5; z-index: -1; opacity: 0.5;
             animation: ai-bot-pulse-ring 3s infinite ease-out;
         }
         @keyframes ai-bot-pulse-ring {
@@ -358,17 +358,17 @@
         #ai-bot-panel.active { opacity: 1; transform: scale(1) translateY(0); pointer-events: auto; }
 
         .ai-bot-header {
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            background: linear-gradient(135deg, #4f46e5 0%, #2563eb 50%, #7c3aed 100%);
             padding: 20px 24px; color: white; display: flex; align-items: center; justify-content: space-between;
         }
         .ai-bot-messages { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 16px; background: #f8fafc; }
         
         .ai-bot-bubble { max-width: 88%; padding: 14px 18px; border-radius: 22px; font-size: 14.5px; line-height: 1.6; word-wrap: break-word; position: relative; }
-        .ai-bot-bubble-user { align-self: flex-end; background: #0ea5e9; color: white; border-bottom-right-radius: 4px; font-weight: 600; box-shadow: 0 4px 12px rgba(14, 165, 233, 0.2); }
+        .ai-bot-bubble-user { align-self: flex-end; background: #4f46e5; color: white; border-bottom-right-radius: 4px; font-weight: 600; box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2); }
         .ai-bot-bubble-bot { align-self: flex-start; background: white; color: #1e293b; border-bottom-left-radius: 4px; box-shadow: 0 4px 10px rgba(0,0,0,0.04); border: 1px solid #f1f5f9; }
 
         /* Markdown Styling */
-        .ai-bot-markdown strong { font-weight: 800; color: #0369a1; }
+        .ai-bot-markdown strong { font-weight: 800; color: #4f46e5; }
         .ai-bot-markdown ul { margin: 8px 0; padding-left: 20px; list-style-type: disc; }
         .ai-bot-markdown li { margin-bottom: 4px; }
         .ai-bot-markdown p { margin-bottom: 8px; }
@@ -380,11 +380,11 @@
             flex: 1; border: 1.5px solid #e2e8f0; border-radius: 16px; padding: 12px 18px; outline: none;
             font-size: 14px; font-weight: 600; transition: border-color 0.2s;
         }
-        #ai-bot-input:focus { border-color: #0ea5e9; }
+        #ai-bot-input:focus { border-color: #4f46e5; }
         #ai-bot-input:disabled { background: #f8fafc; color: #94a3b8; }
 
-        #ai-bot-send { background: #0ea5e9; color: white; width: 48px; height: 48px; border-radius: 14px; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
-        #ai-bot-send:hover:not(:disabled) { background: #0284c7; transform: translateY(-2px); }
+        #ai-bot-send { background: #4f46e5; color: white; width: 48px; height: 48px; border-radius: 14px; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
+        #ai-bot-send:hover:not(:disabled) { background: #4338ca; transform: translateY(-2px); }
         #ai-bot-send:disabled { opacity: 0.5; cursor: not-allowed; }
 
         .ai-bot-suggestions { display: flex; flex-wrap: wrap; gap: 8px; padding: 0 18px 14px 18px; background: #f8fafc; }
@@ -392,7 +392,7 @@
             background: white; border: 1.5px solid #e2e8f0; padding: 8px 14px; border-radius: 12px;
             font-size: 12px; font-weight: 800; color: #64748b; cursor: pointer; transition: 0.2s;
         }
-        .ai-bot-suggest-btn:hover { border-color: #0ea5e9; color: #0ea5e9; background: #f0f9ff; }
+        .ai-bot-suggest-btn:hover { border-color: #4f46e5; color: #4f46e5; background: #f0f9ff; }
 
         .ai-bot-status-text { font-size: 11px; color: #94a3b8; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; margin-top: 10px; display: none; text-align: center; }
 
@@ -753,6 +753,11 @@
     let isFileLoaded = false;
     let isRoleSelected = false;
 
+    /* AI BOT WIDGET CONFIG START */
+    let aiBotGeminiModel = "gemini-3.1-flash-lite-preview";
+    let aiBotGeminiApiKey = "";
+    /* AI BOT WIDGET CONFIG END */
+
     const progressionColors = ['#10b981', '#0ea5e9', '#6366f1', '#8b5cf6', '#d946ef', '#f59e0b'];
 
     const fixedBenefits = [
@@ -868,6 +873,14 @@
             const benefitData = parseCSV(benefitCsvText);
             salaryBenefitData = benefitData.filter(d => d.milestone_level && d.salary);
             benefitListData = benefitData.filter(d => d.benefit);
+
+            /* AI BOT CONFIG FROM SHEET START */
+            const aiConfigRow = benefitData.find(row => row.model || row.api_key);
+            if (aiConfigRow) {
+                if (aiConfigRow.model) aiBotGeminiModel = aiConfigRow.model.trim();
+                if (aiConfigRow.api_key) aiBotGeminiApiKey = aiConfigRow.api_key.trim();
+            }
+            /* AI BOT CONFIG FROM SHEET END */
             
             const roles = [...new Set(masterData.map(d => d.function_title))].filter(Boolean);
             customRoleList.innerHTML = '';
@@ -1201,9 +1214,6 @@
     /* AI BOT WIDGET JS START */
     (function() {
         const aiBotConfig = {
-            apiKey: "AIzaSyBSXp2wrHSchqTUXJyUrOfB6eur-kpeQXI",
-            model: "gemini-3.1-flash-lite-preview",
-            typingSpeed: 20, // ms per character
             retryDelays: [1500, 3000, 4500]
         };
 
@@ -1222,13 +1232,56 @@
         const messagesContainer = document.getElementById('ai-bot-messages');
         const statusLabel = document.getElementById('ai-bot-status');
 
-        // Khởi tạo vị trí
+        // Hàm khởi tạo vị trí icon
         function aiBotInitPos() {
             trigger.style.left = aiBotState.pos.left + 'px';
             trigger.style.bottom = aiBotState.pos.bottom + 'px';
             trigger.style.top = 'auto'; 
+            if (aiBotState.isPanelOpen) aiBotPositionPanel();
         }
         aiBotInitPos();
+
+        // Hàm tính toán vị trí Panel dựa trên Icon
+        function aiBotPositionPanel() {
+            if (!aiBotState.isPanelOpen) return;
+            const rect = trigger.getBoundingClientRect();
+            const panelWidth = Math.min(420, window.innerWidth - 32);
+            const panelHeight = Math.min(620, window.innerHeight - 150);
+            const margin = 16;
+
+            const isLeftSide = rect.left < window.innerWidth / 2;
+            const isTopHalf = rect.top < window.innerHeight / 2;
+
+            let left, top;
+
+            // Ngang
+            if (isLeftSide) {
+                left = rect.left;
+            } else {
+                left = rect.right - panelWidth;
+            }
+
+            // Dọc
+            if (isTopHalf) {
+                top = rect.bottom + 12;
+            } else {
+                top = rect.top - panelHeight - 12;
+            }
+
+            // Clamp trong màn hình
+            left = Math.max(margin, Math.min(left, window.innerWidth - panelWidth - margin));
+            top = Math.max(margin, Math.min(top, window.innerHeight - panelHeight - margin));
+
+            panel.style.left = left + 'px';
+            panel.style.top = top + 'px';
+            panel.style.bottom = 'auto';
+            panel.style.right = 'auto';
+            
+            // Transform origin cho animation
+            const originX = isLeftSide ? 'left' : 'right';
+            const originY = isTopHalf ? 'top' : 'bottom';
+            panel.style.transformOrigin = `${originY} ${originX}`;
+        }
 
         // --- DRAG AND DROP ---
         let startX, startY, initLeft, initBottom;
@@ -1255,13 +1308,15 @@
                 let newLeft = initLeft + dx;
                 let newBottom = initBottom - dy;
 
-                // Giới hạn
+                // Giới hạn trong viewport
                 newLeft = Math.max(10, Math.min(window.innerWidth - 75, newLeft));
                 newBottom = Math.max(10, Math.min(window.innerHeight - 75, newBottom));
 
                 trigger.style.left = newLeft + 'px';
                 trigger.style.bottom = newBottom + 'px';
                 aiBotState.pos = { left: newLeft, bottom: newBottom };
+                
+                if (aiBotState.isPanelOpen) aiBotPositionPanel();
             }
         }
 
@@ -1285,23 +1340,7 @@
         function aiBotTogglePanel() {
             aiBotState.isPanelOpen = !aiBotState.isPanelOpen;
             if (aiBotState.isPanelOpen) {
-                const rect = trigger.getBoundingClientRect();
-                const isLeft = rect.left < window.innerWidth / 2;
-                const isTop = rect.top < window.innerHeight / 2;
-
-                panel.style.left = isLeft ? (rect.left + 'px') : 'auto';
-                panel.style.right = isLeft ? 'auto' : (window.innerWidth - rect.right + 'px');
-                
-                if (isTop) {
-                    panel.style.top = (rect.bottom + 15) + 'px';
-                    panel.style.bottom = 'auto';
-                    panel.style.transformOrigin = isLeft ? 'top left' : 'top right';
-                } else {
-                    panel.style.bottom = (window.innerHeight - rect.top + 15) + 'px';
-                    panel.style.top = 'auto';
-                    panel.style.transformOrigin = isLeft ? 'bottom left' : 'bottom right';
-                }
-                
+                aiBotPositionPanel();
                 panel.classList.add('active');
                 trigger.classList.remove('ai-bot-periodic-shake');
                 setTimeout(() => input.focus(), 300);
@@ -1313,7 +1352,7 @@
 
         closeBtn.onclick = () => aiBotTogglePanel();
 
-        // Simple Markdown Parser
+        // Simple Markdown Parser cho AI response
         function aiBotParseMarkdown(text) {
             return text
                 .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
@@ -1322,7 +1361,7 @@
                 .replace(/\n/g, '<br>');
         }
 
-        // Typewriting
+        // Hiệu ứng Typewriting
         async function aiBotTypewrite(element, fullText) {
             aiBotState.isTyping = true;
             input.disabled = true;
@@ -1347,12 +1386,21 @@
             input.focus();
         }
 
-        // Send Logic
+        // Xử lý gửi tin nhắn
         async function aiBotHandleSend(customText = null) {
+            if (!aiBotGeminiApiKey) {
+                const errDiv = document.createElement('div');
+                errDiv.className = 'ai-bot-bubble ai-bot-bubble-bot text-rose-500 font-bold';
+                errDiv.innerText = "Chưa có API key để kết nối AI.";
+                messagesContainer.appendChild(errDiv);
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                return;
+            }
+
             const query = customText || input.value.trim();
             if (!query || aiBotState.isTyping) return;
 
-            // User Message
+            // User Message UI
             const uDiv = document.createElement('div');
             uDiv.className = 'ai-bot-bubble ai-bot-bubble-user';
             uDiv.innerText = query;
@@ -1360,7 +1408,7 @@
             input.value = '';
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
 
-            // Bot response container
+            // Thinking Indicator UI
             const bDiv = document.createElement('div');
             bDiv.className = 'ai-bot-bubble ai-bot-bubble-bot';
             bDiv.innerHTML = `<div class="ai-bot-thinking"><div class="ai-bot-dot"></div><div class="ai-bot-dot"></div><div class="ai-bot-dot"></div></div>`;
@@ -1369,15 +1417,16 @@
 
             try {
                 const response = await aiBotFetchAI(query);
-                bDiv.innerHTML = ""; // Clear thinking
+                bDiv.innerHTML = ""; // Xóa thinking
                 await aiBotTypewrite(bDiv, response);
             } catch (err) {
-                bDiv.innerText = "Hệ thống bận: " + err.message;
+                bDiv.innerText = "Lỗi kết nối: " + err.message;
                 input.disabled = false;
                 sendBtn.disabled = false;
             }
         }
 
+        // Gọi Gemini API với cơ chế Retry
         async function aiBotFetchAI(prompt, retry = 0) {
             const kb = JSON.stringify((typeof masterData !== 'undefined' ? masterData : []).slice(0, 40));
             const systemPrompt = `Bạn là trợ lý tư vấn lộ trình nghề nghiệp dựa trên dữ liệu Roadmap nội bộ.
@@ -1387,11 +1436,11 @@
             2. Nếu dữ liệu không đủ, trả lời ngắn: "Dữ liệu hiện tại chưa có đủ thông tin về nội dung này."
             3. Trả lời ngắn gọn, ưu tiên dạng gạch đầu dòng.
             4. Mỗi câu trả lời tối đa 120 từ.
-            5. Nếu người dùng hỏi định hướng nghề nghiệp, gợi ý tối đa 2 lộ trình phù hợp.
-            6. Với mỗi lộ trình, chỉ nêu: Vị trí, lý do, kỹ năng, bước tiếp theo.
+            5. Nếu người dùng hỏi định hướng nghề nghiệp, gợi ý tối đa 2 lộ trình phù hợp nhất.
+            6. Với mỗi lộ trình, chỉ nêu: Vị trí, lý do, kỹ năng cần chuẩn bị, bước tiếp theo.
             7. Ngôn ngữ: tiếng Việt.`;
 
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/${aiBotConfig.model}:generateContent?key=${aiBotConfig.apiKey}`;
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/${aiBotGeminiModel}:generateContent?key=${aiBotGeminiApiKey}`;
             
             try {
                 const res = await fetch(url, {
@@ -1412,9 +1461,9 @@
                         await new Promise(r => setTimeout(r, aiBotConfig.retryDelays[retry]));
                         return aiBotFetchAI(prompt, retry + 1);
                     }
-                    throw new Error(msg || "Lỗi API");
+                    throw new Error(msg || "Lỗi dịch vụ");
                 }
-                return data.candidates?.[0]?.content?.parts?.[0]?.text || "Tôi không tìm thấy thông tin phù hợp.";
+                return data.candidates?.[0]?.content?.parts?.[0]?.text || "Không nhận được phản hồi.";
             } catch (e) {
                 if (retry < 3 && e.message.includes("high demand")) {
                     await new Promise(r => setTimeout(r, aiBotConfig.retryDelays[retry]));
@@ -1430,13 +1479,14 @@
             btn.onclick = () => aiBotHandleSend(btn.dataset.query);
         });
 
-        // Anti-overflow on resize
+        // Xử lý Resize màn hình
         window.addEventListener('resize', () => {
             const rect = trigger.getBoundingClientRect();
             if (rect.right > window.innerWidth || rect.bottom > window.innerHeight) {
                 aiBotState.pos = { left: 30, bottom: 30 };
                 aiBotInitPos();
             }
+            if (aiBotState.isPanelOpen) aiBotPositionPanel();
         });
     })();
     /* AI BOT WIDGET JS END */
