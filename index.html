@@ -310,9 +310,6 @@
         .level-pulse-icon { animation: levelPulse 2.5s infinite ease-in-out; }
 
         /* AI BOT WIDGET START */
-        /* Link Font Awesome */
-        @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css');
-
         #ai-bot-trigger {
             position: fixed; z-index: 1000;
             width: 65px; height: 65px; cursor: pointer; 
@@ -323,9 +320,8 @@
             touch-action: none; user-select: none;
         }
         #ai-bot-trigger:hover { transform: scale(1.1); }
-        #ai-bot-trigger i { color: white; font-size: 26px; pointer-events: none; }
+        #ai-bot-trigger svg { width: 30px; height: 30px; fill: white; pointer-events: none; }
 
-        /* Pulse Circle Effect - Circular Only */
         #ai-bot-trigger::before {
             content: ''; position: absolute; inset: 0; border-radius: 50%;
             background: #4f46e5; z-index: -1; opacity: 0.5;
@@ -336,7 +332,6 @@
             100% { transform: scale(1.8); opacity: 0; }
         }
 
-        /* Periodic Shake */
         .ai-bot-periodic-shake { animation: ai-bot-shake-anim 6s infinite; }
         @keyframes ai-bot-shake-anim {
             0%, 90%, 100% { transform: rotate(0); }
@@ -359,23 +354,25 @@
 
         .ai-bot-header {
             background: linear-gradient(135deg, #4f46e5 0%, #2563eb 50%, #7c3aed 100%);
-            padding: 20px 24px; color: white; display: flex; align-items: center; justify-content: space-between;
+            padding: 18px 24px; color: white; display: flex; align-items: center; justify-content: space-between;
         }
-        .ai-bot-messages { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 16px; background: #f8fafc; }
+        .ai-bot-messages { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 14px; background: #f8fafc; }
         
-        .ai-bot-bubble { max-width: 88%; padding: 14px 18px; border-radius: 22px; font-size: 14.5px; line-height: 1.6; word-wrap: break-word; position: relative; }
-        .ai-bot-bubble-user { align-self: flex-end; background: #4f46e5; color: white; border-bottom-right-radius: 4px; font-weight: 600; box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2); }
-        .ai-bot-bubble-bot { align-self: flex-start; background: white; color: #1e293b; border-bottom-left-radius: 4px; box-shadow: 0 4px 10px rgba(0,0,0,0.04); border: 1px solid #f1f5f9; }
+        .ai-bot-bubble { max-width: 88%; padding: 12px 16px; border-radius: 20px; font-size: 14.5px; line-height: 1.55; word-wrap: break-word; position: relative; }
+        .ai-bot-bubble-user { align-self: flex-end; background: #4f46e5; color: white; border-bottom-right-radius: 4px; font-weight: 600; box-shadow: 0 4px 12px rgba(79, 70, 229, 0.15); }
+        .ai-bot-bubble-bot { align-self: flex-start; background: white; color: #1e293b; border-bottom-left-radius: 4px; box-shadow: 0 4px 10px rgba(0,0,0,0.03); border: 1px solid #f1f5f9; }
 
-        /* Markdown Styling */
-        .ai-bot-markdown strong { font-weight: 800; color: #4f46e5; }
-        .ai-bot-markdown ul { margin: 8px 0; padding-left: 20px; list-style-type: disc; }
-        .ai-bot-markdown li { margin-bottom: 4px; }
-        .ai-bot-markdown p { margin-bottom: 8px; }
+        .ai-bot-markdown { line-height: 1.5; color: #1e293b; }
+        .ai-bot-markdown strong { font-weight: 700; color: #4f46e5; }
+        .ai-bot-markdown p { margin: 0.35rem 0; }
+        .ai-bot-markdown p:first-child { margin-top: 0; }
         .ai-bot-markdown p:last-child { margin-bottom: 0; }
+        .ai-bot-markdown ul, .ai-bot-markdown ol { margin: 0.35rem 0 0.35rem 1.2rem; padding: 0; list-style-type: disc; }
+        .ai-bot-markdown li { margin: 0.18rem 0; padding-left: 0.2rem; }
+        .ai-bot-markdown br { display: block; content: ""; margin-top: 0.2rem; }
 
-        .ai-bot-input-area { padding: 18px; background: white; border-top: 1px solid #f1f5f9; }
-        .ai-bot-input-container { display: flex; gap: 10px; }
+        .ai-bot-input-area { padding: 16px; background: white; border-top: 1px solid #f1f5f9; }
+        .ai-bot-input-container { display: flex; gap: 10px; align-items: center; }
         #ai-bot-input {
             flex: 1; border: 1.5px solid #e2e8f0; border-radius: 16px; padding: 12px 18px; outline: none;
             font-size: 14px; font-weight: 600; transition: border-color 0.2s;
@@ -383,20 +380,20 @@
         #ai-bot-input:focus { border-color: #4f46e5; }
         #ai-bot-input:disabled { background: #f8fafc; color: #94a3b8; }
 
-        #ai-bot-send { background: #4f46e5; color: white; width: 48px; height: 48px; border-radius: 14px; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
+        #ai-bot-send { background: #4f46e5; color: white; width: 46px; height: 46px; border-radius: 14px; display: flex; align-items: center; justify-content: center; transition: 0.2s; border: none; cursor: pointer; }
         #ai-bot-send:hover:not(:disabled) { background: #4338ca; transform: translateY(-2px); }
         #ai-bot-send:disabled { opacity: 0.5; cursor: not-allowed; }
+        #ai-bot-send svg { width: 22px; height: 22px; fill: white; }
 
-        .ai-bot-suggestions { display: flex; flex-wrap: wrap; gap: 8px; padding: 0 18px 14px 18px; background: #f8fafc; }
+        .ai-bot-suggestions { display: flex; flex-wrap: wrap; gap: 8px; padding: 0 16px 12px 16px; background: #f8fafc; }
         .ai-bot-suggest-btn {
-            background: white; border: 1.5px solid #e2e8f0; padding: 8px 14px; border-radius: 12px;
-            font-size: 12px; font-weight: 800; color: #64748b; cursor: pointer; transition: 0.2s;
+            background: white; border: 1.5px solid #e2e8f0; padding: 8px 12px; border-radius: 12px;
+            font-size: 11.5px; font-weight: 800; color: #64748b; cursor: pointer; transition: 0.2s;
         }
         .ai-bot-suggest-btn:hover { border-color: #4f46e5; color: #4f46e5; background: #f0f9ff; }
 
-        .ai-bot-status-text { font-size: 11px; color: #94a3b8; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; margin-top: 10px; display: none; text-align: center; }
+        .ai-bot-status-text { font-size: 10px; color: #94a3b8; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; margin-top: 10px; display: none; text-align: center; }
 
-        /* Thinking animation */
         .ai-bot-thinking { display: flex; gap: 4px; padding: 4px 0; }
         .ai-bot-dot { width: 6px; height: 6px; background: #94a3b8; border-radius: 50%; animation: ai-bot-bounce 1.4s infinite ease-in-out; }
         .ai-bot-dot:nth-child(2) { animation-delay: 0.2s; }
@@ -404,7 +401,7 @@
         @keyframes ai-bot-bounce { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1); } }
 
         @media (max-width: 640px) {
-            #ai-bot-panel { width: calc(100vw - 32px); height: 500px; }
+            #ai-bot-panel { width: calc(100vw - 32px); height: 520px; }
         }
         /* AI BOT WIDGET END */
     </style>
@@ -695,31 +692,31 @@
 
 <!-- AI BOT WIDGET START -->
 <div id="ai-bot-trigger" class="ai-bot-periodic-shake">
-    <i class="fa-solid fa-user-doctor-message"></i>
+    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="white"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H5.17l-1.17 1.17V4h16v12zm-9-4h2v2h-2zm0-6h2v4h-2z"/></svg>
 </div>
 
 <div id="ai-bot-panel">
     <div class="ai-bot-header">
         <div class="flex items-center gap-3">
-            <div class="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center">
-                <i class="fa-solid fa-robot text-white"></i>
+            <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-sm">
+                <svg viewBox="0 0 24 24" style="width:24px; height:24px; fill:white;"><path d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.39-1 1.73V7h1a3 3 0 0 1 3 3v8a3 3 0 0 1-3 3H9a3 3 0 0 1-3-3v-8a3 3 0 0 1 3-3h1V5.73c-.6-.34-1-1.01-1-1.73a2 2 0 0 1 2-2zM9 9a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-8a1 1 0 0 0-1-1H9zm1.5 3a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3zm3 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3z"/></svg>
             </div>
             <div>
-                <h4 class="font-black text-[15px] tracking-tight">Career Path Assistant</h4>
-                <div class="flex items-center gap-1.5 opacity-80">
+                <h4 class="font-black text-[15px] tracking-tight leading-tight">Career Path Assistant</h4>
+                <div class="flex items-center gap-1.5 opacity-90">
                     <span class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></span>
-                    <span class="text-[10px] font-bold uppercase tracking-widest">AI Consultant</span>
+                    <span class="text-[10px] font-extrabold uppercase tracking-widest">AI Consultant</span>
                 </div>
             </div>
         </div>
         <button id="ai-bot-close" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-white/10 transition-colors">
-            <i class="fa-solid fa-xmark text-white"></i>
+            <svg viewBox="0 0 24 24" style="width:20px; height:20px; fill:white;"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
         </button>
     </div>
 
     <div id="ai-bot-messages" class="ai-bot-messages custom-scrollbar">
         <div class="ai-bot-bubble ai-bot-bubble-bot">
-            Xin chào! Tôi là trợ lý định hướng nghề nghiệp. Bạn cần hỗ trợ gì về lộ trình phát triển trong ngành Dầu khí không?
+            <div class="ai-bot-markdown">Xin chào! Tôi là trợ lý định hướng nghề nghiệp Dầu khí. Tôi có thể giúp gì cho bạn hôm nay?</div>
         </div>
     </div>
 
@@ -732,12 +729,12 @@
 
     <div class="ai-bot-input-area">
         <div class="ai-bot-input-container">
-            <input type="text" id="ai-bot-input" placeholder="Đặt câu hỏi cho AI..." autocomplete="off">
+            <input type="text" id="ai-bot-input" placeholder="Đặt câu hỏi cho trợ lý AI..." autocomplete="off">
             <button id="ai-bot-send">
-                <i class="fa-solid fa-paper-plane"></i>
+                <svg viewBox="0 0 24 24" fill="white"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 7z"/></svg>
             </button>
         </div>
-        <div id="ai-bot-status" class="ai-bot-status-text">AI đang trả lời...</div>
+        <div id="ai-bot-status" class="ai-bot-status-text">AI đang soạn câu trả lời...</div>
     </div>
 </div>
 <!-- AI BOT WIDGET END -->
@@ -756,6 +753,14 @@
     /* AI BOT WIDGET CONFIG START */
     let aiBotGeminiModel = "gemini-3.1-flash-lite-preview";
     let aiBotGeminiApiKey = "";
+    let aiBotAnswerRule = `QUY TẮC TRẢ LỜI:
+1. Chỉ sử dụng thông tin có trong dữ liệu CSV. Không tự bịa thêm.
+2. Nếu dữ liệu không đủ, trả lời ngắn: "Dữ liệu hiện tại chưa có đủ thông tin về nội dung này."
+3. Trả lời ngắn gọn, ưu tiên dạng gạch đầu dòng.
+4. Mỗi câu trả lời tối đa 120 từ.
+5. Nếu người dùng hỏi định hướng nghề nghiệp, gợi ý tối đa 2 lộ trình phù hợp nhất.
+6. Với mỗi lộ trình, chỉ nêu: Vị trí phù hợp, lý do, kỹ năng cần chuẩn bị, bước tiếp theo.
+7. Ngôn ngữ: tiếng Việt.`;
     /* AI BOT WIDGET CONFIG END */
 
     const progressionColors = ['#10b981', '#0ea5e9', '#6366f1', '#8b5cf6', '#d946ef', '#f59e0b'];
@@ -849,7 +854,14 @@
         return 'briefcase'; 
     }
 
-    // --- LOGIC GỐC ---
+    // --- LOGIC GỐC (NÂNG CẤP XỬ LÝ CSV) ---
+    function aiBotNormalizeAnswerRule(value) {
+        if (!value) return null;
+        // Xử lý dấu nháy escape CSV "" thành "
+        let clean = value.trim().replace(/""/g, '"');
+        return clean;
+    }
+
     async function loadExcelDataAutomatically() {
         try {
             const protocol = window.location.protocol;
@@ -875,10 +887,14 @@
             benefitListData = benefitData.filter(d => d.benefit);
 
             /* AI BOT CONFIG FROM SHEET START */
-            const aiConfigRow = benefitData.find(row => row.model || row.api_key);
+            const aiConfigRow = benefitData.find(row => row.model || row.api_key || row.answer_rule);
             if (aiConfigRow) {
                 if (aiConfigRow.model) aiBotGeminiModel = aiConfigRow.model.trim();
                 if (aiConfigRow.api_key) aiBotGeminiApiKey = aiConfigRow.api_key.trim();
+                if (aiConfigRow.answer_rule) {
+                    const normRule = aiBotNormalizeAnswerRule(aiConfigRow.answer_rule);
+                    if (normRule) aiBotAnswerRule = normRule;
+                }
             }
             /* AI BOT CONFIG FROM SHEET END */
             
@@ -903,29 +919,48 @@
 
     function parseCSV(csvText) {
         const rows = [];
-        let current = '';
         let row = [];
+        let cell = '';
         let inQuotes = false;
+        
         for (let i = 0; i < csvText.length; i++) {
             const char = csvText[i];
-            const nextChar = csvText[i + 1];
+            const next = csvText[i+1];
+            
             if (char === '"') {
-                if (inQuotes && nextChar === '"') { current += '"'; i++; } else { inQuotes = !inQuotes; }
-            } else if (char === ',' && !inQuotes) { row.push(current.trim()); current = ''; }
-            else if ((char === '\n' || char === '\r') && !inQuotes) {
-                if (char === '\r' && nextChar === '\n') i++;
-                row.push(current.trim()); current = '';
-                if (row.some(cell => cell !== '')) rows.push(row);
+                if (inQuotes && next === '"') {
+                    cell += '"';
+                    i++; // Skip escaped quote
+                } else {
+                    inQuotes = !inQuotes;
+                }
+            } else if (char === ',' && !inQuotes) {
+                row.push(cell.trim());
+                cell = '';
+            } else if ((char === '\n' || char === '\r') && !inQuotes) {
+                if (char === '\r' && next === '\n') i++;
+                row.push(cell.trim());
+                if (row.some(c => c !== '')) rows.push(row);
                 row = [];
-            } else { current += char; }
+                cell = '';
+            } else {
+                cell += char;
+            }
         }
-        if (current.length > 0 || row.length > 0) { row.push(current.trim()); if (row.some(cell => cell !== '')) rows.push(row); }
+        if (cell || row.length > 0) {
+            row.push(cell.trim());
+            if (row.some(c => c !== '')) rows.push(row);
+        }
+        
         let headerIndex = 0;
-        for (let i = 0; i < rows.length; i++) { if (rows[i].includes('function_title')) { headerIndex = i; break; } }
+        for (let i = 0; i < rows.length; i++) { if (rows[i].includes('function_title') || rows[i].includes('milestone_level')) { headerIndex = i; break; } }
         const headers = rows[headerIndex].map(h => h.trim().toLowerCase());
         const dataRows = rows.slice(headerIndex + 1);
-        return dataRows.filter(r => r.some(cell => cell !== '')).map(r => {
-            const obj = {}; headers.forEach((h, idx) => { obj[h] = (r[idx] || '').trim(); }); return obj;
+        
+        return dataRows.map(r => {
+            const obj = {}; 
+            headers.forEach((h, idx) => { obj[h] = (r[idx] || ''); }); 
+            return obj;
         });
     }
 
@@ -1232,7 +1267,6 @@
         const messagesContainer = document.getElementById('ai-bot-messages');
         const statusLabel = document.getElementById('ai-bot-status');
 
-        // Hàm khởi tạo vị trí icon
         function aiBotInitPos() {
             trigger.style.left = aiBotState.pos.left + 'px';
             trigger.style.bottom = aiBotState.pos.bottom + 'px';
@@ -1241,7 +1275,6 @@
         }
         aiBotInitPos();
 
-        // Hàm tính toán vị trí Panel dựa trên Icon
         function aiBotPositionPanel() {
             if (!aiBotState.isPanelOpen) return;
             const rect = trigger.getBoundingClientRect();
@@ -1253,22 +1286,9 @@
             const isTopHalf = rect.top < window.innerHeight / 2;
 
             let left, top;
+            if (isLeftSide) { left = rect.left; } else { left = rect.right - panelWidth; }
+            if (isTopHalf) { top = rect.bottom + 12; } else { top = rect.top - panelHeight - 12; }
 
-            // Ngang
-            if (isLeftSide) {
-                left = rect.left;
-            } else {
-                left = rect.right - panelWidth;
-            }
-
-            // Dọc
-            if (isTopHalf) {
-                top = rect.bottom + 12;
-            } else {
-                top = rect.top - panelHeight - 12;
-            }
-
-            // Clamp trong màn hình
             left = Math.max(margin, Math.min(left, window.innerWidth - panelWidth - margin));
             top = Math.max(margin, Math.min(top, window.innerHeight - panelHeight - margin));
 
@@ -1277,66 +1297,49 @@
             panel.style.bottom = 'auto';
             panel.style.right = 'auto';
             
-            // Transform origin cho animation
             const originX = isLeftSide ? 'left' : 'right';
             const originY = isTopHalf ? 'top' : 'bottom';
             panel.style.transformOrigin = `${originY} ${originX}`;
         }
 
-        // --- DRAG AND DROP ---
         let startX, startY, initLeft, initBottom;
-
         function onDragStart(e) {
             const touch = e.type === 'touchstart' ? e.touches[0] : e;
-            startX = touch.clientX;
-            startY = touch.clientY;
+            startX = touch.clientX; startY = touch.clientY;
             initLeft = trigger.offsetLeft;
             initBottom = parseInt(window.getComputedStyle(trigger).bottom);
             aiBotState.isDragging = false;
-
             document.addEventListener(e.type === 'touchstart' ? 'touchmove' : 'mousemove', onDragging);
             document.addEventListener(e.type === 'touchstart' ? 'touchend' : 'mouseup', onDragEnd);
         }
-
         function onDragging(e) {
             const touch = e.type === 'touchmove' ? e.touches[0] : e;
-            const dx = touch.clientX - startX;
-            const dy = touch.clientY - startY;
-
+            const dx = touch.clientX - startX; const dy = touch.clientY - startY;
             if (Math.abs(dx) > 5 || Math.abs(dy) > 5) {
                 aiBotState.isDragging = true;
-                let newLeft = initLeft + dx;
-                let newBottom = initBottom - dy;
-
-                // Giới hạn trong viewport
+                let newLeft = initLeft + dx; let newBottom = initBottom - dy;
                 newLeft = Math.max(10, Math.min(window.innerWidth - 75, newLeft));
                 newBottom = Math.max(10, Math.min(window.innerHeight - 75, newBottom));
-
                 trigger.style.left = newLeft + 'px';
                 trigger.style.bottom = newBottom + 'px';
                 aiBotState.pos = { left: newLeft, bottom: newBottom };
-                
                 if (aiBotState.isPanelOpen) aiBotPositionPanel();
             }
         }
-
         function onDragEnd() {
             document.removeEventListener('mousemove', onDragging);
             document.removeEventListener('mouseup', onDragEnd);
             document.removeEventListener('touchmove', onDragging);
             document.removeEventListener('touchend', onDragEnd);
-
             if (aiBotState.isDragging) {
                 localStorage.setItem('ai-bot-widget-pos', JSON.stringify(aiBotState.pos));
             } else {
                 aiBotTogglePanel();
             }
         }
-
         trigger.addEventListener('mousedown', onDragStart);
         trigger.addEventListener('touchstart', onDragStart, { passive: true });
 
-        // --- UI LOGIC ---
         function aiBotTogglePanel() {
             aiBotState.isPanelOpen = !aiBotState.isPanelOpen;
             if (aiBotState.isPanelOpen) {
@@ -1349,10 +1352,12 @@
                 trigger.classList.add('ai-bot-periodic-shake');
             }
         }
-
         closeBtn.onclick = () => aiBotTogglePanel();
 
-        // Simple Markdown Parser cho AI response
+        function aiBotCleanText(text) {
+            return text.replace(/\n\s*\n\s*\n/g, '\n\n').trim();
+        }
+
         function aiBotParseMarkdown(text) {
             return text
                 .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
@@ -1361,32 +1366,28 @@
                 .replace(/\n/g, '<br>');
         }
 
-        // Hiệu ứng Typewriting
         async function aiBotTypewrite(element, fullText) {
             aiBotState.isTyping = true;
-            input.disabled = true;
-            sendBtn.disabled = true;
+            input.disabled = true; sendBtn.disabled = true;
             statusLabel.style.display = 'block';
-            
             element.classList.add('ai-bot-markdown');
+            
+            const cleanedText = aiBotCleanText(fullText);
             let displayed = "";
-            const words = fullText.split(' ');
+            const words = cleanedText.split(' ');
             
             for (let i = 0; i < words.length; i++) {
                 displayed += words[i] + " ";
                 element.innerHTML = aiBotParseMarkdown(displayed);
                 messagesContainer.scrollTop = messagesContainer.scrollHeight;
-                await new Promise(r => setTimeout(r, 40));
+                await new Promise(r => setTimeout(r, 35));
             }
-
             aiBotState.isTyping = false;
-            input.disabled = false;
-            sendBtn.disabled = false;
+            input.disabled = false; sendBtn.disabled = false;
             statusLabel.style.display = 'none';
             input.focus();
         }
 
-        // Xử lý gửi tin nhắn
         async function aiBotHandleSend(customText = null) {
             if (!aiBotGeminiApiKey) {
                 const errDiv = document.createElement('div');
@@ -1396,11 +1397,9 @@
                 messagesContainer.scrollTop = messagesContainer.scrollHeight;
                 return;
             }
-
             const query = customText || input.value.trim();
             if (!query || aiBotState.isTyping) return;
 
-            // User Message UI
             const uDiv = document.createElement('div');
             uDiv.className = 'ai-bot-bubble ai-bot-bubble-user';
             uDiv.innerText = query;
@@ -1408,7 +1407,6 @@
             input.value = '';
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
 
-            // Thinking Indicator UI
             const bDiv = document.createElement('div');
             bDiv.className = 'ai-bot-bubble ai-bot-bubble-bot';
             bDiv.innerHTML = `<div class="ai-bot-thinking"><div class="ai-bot-dot"></div><div class="ai-bot-dot"></div><div class="ai-bot-dot"></div></div>`;
@@ -1417,31 +1415,24 @@
 
             try {
                 const response = await aiBotFetchAI(query);
-                bDiv.innerHTML = ""; // Xóa thinking
+                bDiv.innerHTML = ""; 
                 await aiBotTypewrite(bDiv, response);
             } catch (err) {
                 bDiv.innerText = "Lỗi kết nối: " + err.message;
-                input.disabled = false;
-                sendBtn.disabled = false;
+                input.disabled = false; sendBtn.disabled = false;
             }
         }
 
-        // Gọi Gemini API với cơ chế Retry
         async function aiBotFetchAI(prompt, retry = 0) {
-            const kb = JSON.stringify((typeof masterData !== 'undefined' ? masterData : []).slice(0, 40));
+            const kb = JSON.stringify((typeof masterData !== 'undefined' ? masterData : []).slice(0, 50));
             const systemPrompt = `Bạn là trợ lý tư vấn lộ trình nghề nghiệp dựa trên dữ liệu Roadmap nội bộ.
-            DỮ LIỆU ROADMAP CSV: ${kb}
-            QUY TẮC TRẢ LỜI:
-            1. Chỉ sử dụng thông tin có trong dữ liệu CSV. Không tự bịa thêm.
-            2. Nếu dữ liệu không đủ, trả lời ngắn: "Dữ liệu hiện tại chưa có đủ thông tin về nội dung này."
-            3. Trả lời ngắn gọn, ưu tiên dạng gạch đầu dòng.
-            4. Mỗi câu trả lời tối đa 120 từ.
-            5. Nếu người dùng hỏi định hướng nghề nghiệp, gợi ý tối đa 2 lộ trình phù hợp nhất.
-            6. Với mỗi lộ trình, chỉ nêu: Vị trí, lý do, kỹ năng cần chuẩn bị, bước tiếp theo.
-            7. Ngôn ngữ: tiếng Việt.`;
+
+DỮ LIỆU ROADMAP CSV:
+${kb}
+
+${aiBotAnswerRule}`;
 
             const url = `https://generativelanguage.googleapis.com/v1beta/models/${aiBotGeminiModel}:generateContent?key=${aiBotGeminiApiKey}`;
-            
             try {
                 const res = await fetch(url, {
                     method: 'POST',
@@ -1451,19 +1442,16 @@
                         systemInstruction: { parts: [{ text: systemPrompt }] }
                     })
                 });
-
                 const data = await res.json();
                 if (!res.ok) {
                     const msg = data.error?.message || "";
-                    const isHighDemand = msg.includes("experiencing high demand") || msg.includes("Please try again later");
-                    
-                    if (isHighDemand && retry < 3) {
+                    if (msg.includes("high demand") && retry < 3) {
                         await new Promise(r => setTimeout(r, aiBotConfig.retryDelays[retry]));
                         return aiBotFetchAI(prompt, retry + 1);
                     }
-                    throw new Error(msg || "Lỗi dịch vụ");
+                    throw new Error(msg || "Lỗi kết nối");
                 }
-                return data.candidates?.[0]?.content?.parts?.[0]?.text || "Không nhận được phản hồi.";
+                return data.candidates?.[0]?.content?.parts?.[0]?.text || "Không tìm thấy phản hồi phù hợp.";
             } catch (e) {
                 if (retry < 3 && e.message.includes("high demand")) {
                     await new Promise(r => setTimeout(r, aiBotConfig.retryDelays[retry]));
@@ -1479,7 +1467,6 @@
             btn.onclick = () => aiBotHandleSend(btn.dataset.query);
         });
 
-        // Xử lý Resize màn hình
         window.addEventListener('resize', () => {
             const rect = trigger.getBoundingClientRect();
             if (rect.right > window.innerWidth || rect.bottom > window.innerHeight) {
